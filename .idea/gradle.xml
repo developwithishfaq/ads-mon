@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="GradleSettings">
+    <option name="linkedExternalProjectsSettings">
+      <GradleProjectSettings>
+        <option name="externalProjectPath" value="$PROJECT_DIR$" />
+        <option name="gradleJvm" value="#GRADLE_LOCAL_JAVA_HOME" />
+        <option name="modules">
+          <set>
+            <option value="$PROJECT_DIR$" />
+            <option value="$PROJECT_DIR$/admobAds" />
+            <option value="$PROJECT_DIR$/admobAds/adsMain" />
+            <option value="$PROJECT_DIR$/admobAds/appOpen" />
+            <option value="$PROJECT_DIR$/admobAds/bannerAds" />
+            <option value="$PROJECT_DIR$/admobAds/core" />
+            <option value="$PROJECT_DIR$/admobAds/interstitials" />
+            <option value="$PROJECT_DIR$/admobAds/nativeAds" />
+            <option value="$PROJECT_DIR$/admobAds/rewadedAd" />
+            <option value="$PROJECT_DIR$/admobAds/rewardedInterAds" />
+            <option value="$PROJECT_DIR$/app" />
+          </set>
+        </option>
+        <option name="resolveExternalAnnotations" value="false" />
+      </GradleProjectSettings>
+    </option>
+  </component>
+</project>
