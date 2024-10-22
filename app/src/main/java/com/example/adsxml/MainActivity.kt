@@ -12,8 +12,6 @@ import com.monetization.adsmain.splash.AdmobSplashAdController
 import com.monetization.bannerads.AdmobBannerAdsManager
 import com.monetization.bannerads.BannerAdSize
 import com.monetization.bannerads.BannerAdType
-import com.monetization.consent.ConsentListener
-import com.monetization.consent.GoogleConsent
 import com.monetization.core.ad_units.core.AdType
 import com.monetization.core.commons.NativeTemplates
 import com.monetization.core.listeners.UiAdsListener
@@ -31,7 +29,6 @@ class MainActivity : ComponentActivity() {
     private lateinit var binding: ActivityMainBinding
 
     private val splashAdController: AdmobSplashAdController by inject()
-    private val consent: GoogleConsent by inject()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

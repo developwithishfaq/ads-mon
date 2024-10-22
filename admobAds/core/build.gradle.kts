@@ -41,7 +41,7 @@ dependencies {
 
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)
-    implementation(libs.androidx.activity.v190)
+    implementation(libs.androidx.activity)
     implementation(libs.material)
     implementation(libs.bundles.ads.related)
 }
