@@ -39,7 +39,8 @@ class AdmobBannerAdsController(
         val adSize = bannerAdType.getBannerSize(activity)
         if (adSize == null) {
             (bannerAdType as? BannerAdType.Collapsible)?.let {
-                val size = BannerAdType.Normal(BannerAdSize.AdaptiveBanner).getBannerSize(activity) ?: AdSize.BANNER
+                val size = BannerAdType.Normal(BannerAdSize.AdaptiveBanner).getBannerSize(activity)
+                    ?: AdSize.BANNER
                 adView.setAdSize(size)
                 extras.putString(
                     "collapsible", when (bannerAdType.collapseType) {
@@ -65,7 +66,6 @@ class AdmobBannerAdsController(
                 super.onAdLoaded()
                 currentBannerAd?.destroyAd(activity)
                 currentBannerAd = AdmobBannerAd(getAdKey(), adView)
-                onLoaded()
                 currentBannerAd?.adView?.setOnPaidEventListener { paidListener ->
                     onAdRevenue(
                         value = paidListener.valueMicros,
@@ -73,6 +73,7 @@ class AdmobBannerAdsController(
                         precisionType = paidListener.precisionType
                     )
                 }
+                onLoaded()
             }
 
             override fun onAdFailedToLoad(error: LoadAdError) {

@@ -168,4 +168,26 @@ class BannerAdWidget @JvmOverloads constructor(
             addView(shimmerView)
         }
     }
+
+    fun refreshAd(showShimmer: Boolean) {
+        if (adPopulated) {
+            adPopulated = false
+            isLoadAdCalled = false
+            activity?.let {
+                onShowAdCalled(
+                    adKey = key,
+                    activity = it,
+                    oneTimeUse = oneTimeUse,
+                    requestNewOnShow = requestNewOnShow,
+                    enabled = isAdEnabled,
+                    shimmerInfo = shimmerInfo,
+                    adsManager = AdmobBannerAdsManager,
+                    adType = AdType.NATIVE,
+                    listener = null,
+                    isForRefresh = true,
+                    showShimmer = showShimmer
+                )
+            }
+        }
+    }
 }

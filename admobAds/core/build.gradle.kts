@@ -56,6 +56,7 @@ afterEvaluate {
                 groupId = "com.github.developwithishfaq"
                 artifactId = "corree"
                 version = "2.1.5"
+
             }
         }
     }

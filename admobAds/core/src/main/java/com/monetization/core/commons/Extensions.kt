@@ -7,7 +7,7 @@ import org.json.JSONObject
 
 fun String.placementToAdWidgetModel(default: AdsWidgetData? = null): AdsWidgetData? {
     try {
-        return JSONObject(this + "_Placement").run {
+        return JSONObject(this).run {
             val enabled = getLongSafe("enabled")?.toInt()
             if (enabled != null && enabled == 1) {
                 AdsWidgetData(

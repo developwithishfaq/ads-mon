@@ -7,7 +7,7 @@ import com.monetization.core.ad_units.core.AdType
 import com.monetization.core.commons.AdsCommons.isFullScreenAdShowing
 import com.monetization.core.commons.AdsCommons.logAds
 import com.monetization.core.commons.SdkConfigs
-import com.monetization.core.commons.SdkConfigs.isAdEnabled
+import com.monetization.core.commons.SdkConfigs.isRemoteAdEnabled
 import com.monetization.core.controllers.AdsController
 
 abstract class AdmobBasePreloadAdsManager(
@@ -41,7 +41,7 @@ abstract class AdmobBasePreloadAdsManager(
         showAd: () -> Unit,
     ) {
         val key = controller?.getAdKey() ?: ""
-        val enabled = placementKey.isAdEnabled(key)
+        val enabled = placementKey.isRemoteAdEnabled(key)
         if (isFullScreenAdShowing) {
             logAds("Full Screen Ad is already showing", true)
             return

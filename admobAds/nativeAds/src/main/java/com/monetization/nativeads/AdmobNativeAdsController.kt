@@ -5,12 +5,12 @@ import com.google.android.gms.ads.AdLoader
 import com.google.android.gms.ads.AdRequest
 import com.google.android.gms.ads.nativead.NativeAd
 import com.google.android.gms.ads.nativead.NativeAdOptions
-import com.monetization.core.controllers.AdsControllerBaseHelper
-import com.monetization.core.managers.AdsLoadingStatusListener
 import com.monetization.core.ad_units.core.AdType
 import com.monetization.core.ad_units.core.AdUnit
 import com.monetization.core.commons.AdsCommons.logAds
+import com.monetization.core.controllers.AdsControllerBaseHelper
 import com.monetization.core.listeners.ControllersListener
+import com.monetization.core.managers.AdsLoadingStatusListener
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -35,15 +35,15 @@ class AdmobNativeAdsController(
         val adLoader = AdLoader.Builder(activity, adId).forNativeAd { nativeAd: NativeAd ->
             currentNativeAd?.destroyAd(activity)
             currentNativeAd = AdmobNativeAd(getAdKey(), nativeAd)
-            CoroutineScope(Dispatchers.Main).launch {
-                onLoaded()
-            }
             currentNativeAd?.nativeAd?.setOnPaidEventListener { paidListener ->
                 onAdRevenue(
                     value = paidListener.valueMicros,
                     currencyCode = paidListener.currencyCode,
                     precisionType = paidListener.precisionType
                 )
+            }
+            CoroutineScope(Dispatchers.Main).launch {
+                onLoaded()
             }
 
         }.withAdListener(object : com.google.android.gms.ads.AdListener() {
@@ -67,7 +67,7 @@ class AdmobNativeAdsController(
     }
 
     override fun destroyAd(activity: Activity?) {
-        logAds("Native Ad(${getAdKey()}) Destroyed,Id=${getAdId()}",true)
+        logAds("Native Ad(${getAdKey()}) Destroyed,Id=${getAdId()}", true)
         currentNativeAd = null
     }
 

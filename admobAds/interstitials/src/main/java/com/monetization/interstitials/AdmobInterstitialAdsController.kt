@@ -40,7 +40,6 @@ class AdmobInterstitialAdsController(
                     super.onAdLoaded(interAd)
                     currentInterstitialAd = null
                     currentInterstitialAd = AdmobInterstitialAd(interAd, getAdKey())
-                    onLoaded()
                     currentInterstitialAd?.interstitialAds?.setOnPaidEventListener { paidListener ->
                         onAdRevenue(
                             value = paidListener.valueMicros,
@@ -48,6 +47,7 @@ class AdmobInterstitialAdsController(
                             precisionType = paidListener.precisionType
                         )
                     }
+                    onLoaded()
 
                 }
 

@@ -36,7 +36,6 @@ class AdmobRewardedInterAdsController(
                     // If your app is going to request only one native ad at a time, set the currentNativeAd reference to null.
                     rewardedInterAd = null
                     rewardedInterAd = AdmobRewardedInterAd(ad, getAdKey())
-                    onLoaded()
                     rewardedInterAd?.rewardedInter?.setOnPaidEventListener { paidListener ->
                         onAdRevenue(
                             value = paidListener.valueMicros,
@@ -44,6 +43,7 @@ class AdmobRewardedInterAdsController(
                             precisionType = paidListener.precisionType
                         )
                     }
+                    onLoaded()
                 }
 
                 override fun onAdFailedToLoad(error: LoadAdError) {

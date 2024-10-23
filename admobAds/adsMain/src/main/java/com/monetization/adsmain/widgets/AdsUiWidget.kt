@@ -11,8 +11,8 @@ import com.monetization.bannerads.BannerAdSize
 import com.monetization.bannerads.BannerAdType
 import com.monetization.bannerads.ui.BannerAdWidget
 import com.monetization.core.commons.AdsCommons.logAds
-import com.monetization.core.commons.SdkConfigs.getAdWidgetModel
-import com.monetization.core.commons.SdkConfigs.isAdEnabled
+import com.monetization.core.commons.SdkConfigs.getRemoteAdWidgetModel
+import com.monetization.core.commons.SdkConfigs.isRemoteAdEnabled
 import com.monetization.core.listeners.UiAdsListener
 import com.monetization.core.ui.AdsWidgetData
 import com.monetization.core.ui.LayoutInfo
@@ -58,8 +58,8 @@ class AdsUiWidget @JvmOverloads constructor(
         }
 
         val (enabled, widgetModel) = Pair(
-            placementKey.isAdEnabled(adKey, defEnabled),
-            placementKey.getAdWidgetModel(adKey, model)
+            placementKey.isRemoteAdEnabled(adKey, defEnabled),
+            placementKey.getRemoteAdWidgetModel(adKey, model)
         )
 
         adEnabled = enabled
@@ -114,7 +114,7 @@ class AdsUiWidget @JvmOverloads constructor(
         shimmerInfo: ShimmerInfo = ShimmerInfo.GivenLayout(),
         oneTimeUse: Boolean = true,
         requestNewOnShow: Boolean = true,
-        listener: UiAdsListener?=null
+        listener: UiAdsListener? = null
     ) {
         removeAndAdBannerWidget()
         try {
@@ -160,6 +160,14 @@ class AdsUiWidget @JvmOverloads constructor(
             bannerWidget.setInPause(check)
         } else {
             nativeWidget.setInPause(check)
+        }
+    }
+
+    fun refreshAd(isNativeAd: Boolean, showShimmerLayout: Boolean = false) {
+        if (isNativeAd) {
+            nativeWidget.refreshAd(showShimmerLayout)
+        }else{
+            bannerWidget.refreshAd(showShimmerLayout)
         }
     }
 

@@ -77,8 +77,11 @@ class MainActivity : ComponentActivity() {
             "Native".loadAd(AdType.INTERSTITIAL, this@MainActivity)
         }
         binding.showAd.setOnClickListener {
-            showBannerAd()
-//            showNativeAd()
+//            showBannerAd()
+            showNativeAd()
+        }
+        binding.reloadAd.setOnClickListener {
+            refreshAd()
         }
 
     }
@@ -91,9 +94,9 @@ class MainActivity : ComponentActivity() {
     private fun showNativeAd() {
         binding.adFrame.sdkNativeAd(
             activity = this,
-            adLayout = NativeTemplates.SmallNative,
+            adLayout = NativeTemplates.LargeNative,
             adKey = "Native",
-            placementKey = true.toConfigString(),
+            placementKey = "Native",
             showNewAdEveryTime = true,
             lifecycle = lifecycle,
             listener = object : UiAdsListener {
@@ -104,10 +107,14 @@ class MainActivity : ComponentActivity() {
         )
     }
 
+    private fun refreshAd() {
+        binding.adFrame.refreshAd(isNativeAd = false, showShimmerLayout = false)
+    }
+
     private fun showBannerAd() {
         binding.adFrame.sdkBannerAd(
             activity = this,
-            type = BannerAdType.Normal(BannerAdSize.Banner),
+            type = BannerAdType.Normal(BannerAdSize.AdaptiveBanner),
             adKey = "Banner",
             placementKey = true.toConfigString(),
             showNewAdEveryTime = true,

@@ -4,17 +4,17 @@ import android.app.Activity
 import com.google.android.gms.ads.AdRequest
 import com.google.android.gms.ads.LoadAdError
 import com.google.android.gms.ads.appopen.AppOpenAd
-import com.monetization.core.controllers.AdsControllerBaseHelper
-import com.monetization.core.managers.AdsLoadingStatusListener
 import com.monetization.core.ad_units.core.AdType
 import com.monetization.core.ad_units.core.AdUnit
+import com.monetization.core.controllers.AdsControllerBaseHelper
 import com.monetization.core.listeners.ControllersListener
+import com.monetization.core.managers.AdsLoadingStatusListener
 
 class AdmobAppOpenAdsController(
     adKey: String,
     adIdsList: List<String>,
     listener: ControllersListener? = null
-) : AdsControllerBaseHelper(adKey, AdType.AppOpen, adIdsList,listener) {
+) : AdsControllerBaseHelper(adKey, AdType.AppOpen, adIdsList, listener) {
     private var currentAppOpenAd: AdmobAppOpenAd? = null
 
     override fun loadAd(
@@ -35,7 +35,6 @@ class AdmobAppOpenAdsController(
                     super.onAdLoaded(ad)
                     currentAppOpenAd?.destroyAd()
                     currentAppOpenAd = AdmobAppOpenAd(ad, getAdKey())
-                    onLoaded()
                     currentAppOpenAd?.appOpenAd?.setOnPaidEventListener { paidListener ->
                         onAdRevenue(
                             value = paidListener.valueMicros,
@@ -43,6 +42,7 @@ class AdmobAppOpenAdsController(
                             precisionType = paidListener.precisionType
                         )
                     }
+                    onLoaded()
                 }
 
                 override fun onAdFailedToLoad(error: LoadAdError) {

@@ -47,14 +47,14 @@ object SdkConfigs {
         configListener = listener
     }
 
-    fun String.isAdEnabled(key: String, def: Boolean = true): Boolean {
+    fun String.isRemoteAdEnabled(key: String, def: Boolean = true): Boolean {
         if (configListener == null) {
             throw IllegalArgumentException("Please set Remote Config Listener by call setRemoteConfigsListener(this)")
         }
         return configListener?.isAdEnabled(this, key) ?: def
     }
 
-    fun String.getAdWidgetModel(key:String,model: AdsWidgetData? = null): AdsWidgetData? {
+    fun String.getRemoteAdWidgetModel(key:String, model: AdsWidgetData? = null): AdsWidgetData? {
         if (configListener == null) {
             throw IllegalArgumentException("Please set Remote Config Listener by call setRemoteConfigsListener(this)")
         }

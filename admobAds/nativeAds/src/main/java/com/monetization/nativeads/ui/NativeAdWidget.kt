@@ -2,15 +2,17 @@ package com.monetization.nativeads.ui
 
 import android.app.Activity
 import android.content.Context
+import android.graphics.Color
 import android.util.AttributeSet
 import android.view.LayoutInflater
+import android.view.View
+import androidx.core.content.ContextCompat
 import com.facebook.shimmer.ShimmerFrameLayout
 import com.monetization.core.ad_units.core.AdType
 import com.monetization.core.commons.AdsCommons.logAds
 import com.monetization.core.commons.NativeConstants.inflateLayoutByLayoutInfo
 import com.monetization.core.commons.NativeConstants.removeViewsFromIt
 import com.monetization.core.listeners.UiAdsListener
-import com.monetization.core.managers.AdsLoadingStatusListener
 import com.monetization.core.ui.LayoutInfo
 import com.monetization.core.ui.ShimmerInfo
 import com.monetization.core.ui.widgetBase.BaseAdsWidget
@@ -20,7 +22,7 @@ import com.monetization.nativeads.AdmobNativeAdsManager
 import com.monetization.nativeads.R
 
 class NativeAdWidget @JvmOverloads constructor(
-    context: Context,
+    private val context: Context,
     attrs: AttributeSet? = null,
     defStyleAttr: Int = 0,
 ) : BaseAdsWidget<AdmobNativeAdsController>(context, attrs, defStyleAttr) {
@@ -71,28 +73,6 @@ class NativeAdWidget @JvmOverloads constructor(
             calledFrom = "Base Native Activity",
             callback = getAdsLoadingListener()
         )
-        /*object : AdsLoadingStatusListener {
-            override fun onAdRequested(adKey: String) {
-                uiListener?.onAdRequested(adKey)
-            }
-
-            override fun onImpression(adKey: String) {
-                uiListener
-            }
-
-            override fun onAdLoaded(adKey: String) {
-                uiListener?.onAdLoaded(adKey)
-                if (adLoaded) {
-                    return
-                }
-                adOnLoaded()
-            }
-
-            override fun onAdFailedToLoad(adKey: String, message: String, code: Int) {
-                uiListener?.onAdFailed(adKey, message, code)
-                adOnFailed()
-            }
-        }*/
     }
 
     override fun populateAd() {
@@ -124,19 +104,42 @@ class NativeAdWidget @JvmOverloads constructor(
         val shimmerLayout = LayoutInflater.from(activity)
             .inflate(com.monetization.core.R.layout.shimmer, null, false)
             ?.findViewById<ShimmerFrameLayout>(com.monetization.core.R.id.shimmerRoot)
-        val shimmerView: ShimmerFrameLayout? = when (info) {
+        val shimmerView: View? = when (info) {
             is ShimmerInfo.GivenLayout -> {
                 val adLayout = layoutView?.inflateLayoutByLayoutInfo(activity!!)
+                if (info.shimmerColor != null) {
+                    listOf(
+                        adLayout?.findViewById<View?>(R.id.ad_headline),
+                        adLayout?.findViewById<View?>(R.id.ad_body),
+                        adLayout?.findViewById<View?>(R.id.tv_ad),
+                        adLayout?.findViewById<View?>(R.id.ad_app_icon),
+                        adLayout?.findViewById<View?>(R.id.ad_media),
+                        adLayout?.findViewById<View?>(R.id.ad_call_to_action),
+                    ).forEach {
+                        it?.setBackgroundColor(
+                            try {
+                                Color.parseColor(info.shimmerColor)
+                            } catch (_: Exception) {
+                                logAds("Bad Shimmer Color !!!!!!!!!!! : ${info.shimmerColor}", true)
+                                ContextCompat.getColor(context, R.color.shimmercolor)
+                            }
+                        )
+                    }
+                }
                 shimmerLayout?.removeViewsFromIt()
                 shimmerLayout?.addView(adLayout)
                 shimmerLayout
             }
 
             is ShimmerInfo.ShimmerByView -> {
-                info.layoutView?.let {
-                    shimmerLayout?.removeViewsFromIt()
-                    shimmerLayout?.addView(it)
-                    shimmerLayout
+                if (info.addInAShimmerView) {
+                    info.layoutView?.let {
+                        shimmerLayout?.removeViewsFromIt()
+                        shimmerLayout?.addView(it)
+                        shimmerLayout
+                    } ?: run { null }
+                } else {
+                    info.layoutView
                 }
             }
 
@@ -145,7 +148,31 @@ class NativeAdWidget @JvmOverloads constructor(
             }
         }
         removeAllViews()
-        addView(shimmerView)
+        if (shimmerView != null) {
+            addView(shimmerView)
+        }
+    }
+
+    fun refreshAd(showShimmer: Boolean = false) {
+        if (adPopulated) {
+            adPopulated = false
+            isLoadAdCalled = false
+            activity?.let {
+                onShowAdCalled(
+                    adKey = key,
+                    activity = it,
+                    oneTimeUse = oneTimeUse,
+                    requestNewOnShow = requestNewOnShow,
+                    enabled = isAdEnabled,
+                    shimmerInfo = shimmerInfo,
+                    adsManager = AdmobNativeAdsManager,
+                    adType = AdType.NATIVE,
+                    listener = null,
+                    isForRefresh = true,
+                    showShimmer = showShimmer
+                )
+            }
+        }
     }
 
 }

@@ -8,11 +8,13 @@ sealed class ShimmerInfo(
 
     data object None : ShimmerInfo()
     data class GivenLayout(
+        val shimmerColor: String? = "#E0E0E0",
         override val hideShimmerOnFailure: Boolean = true
     ) : ShimmerInfo()
 
     data class ShimmerByView(
         val layoutView: View?,
+        val addInAShimmerView: Boolean = true,
         override val hideShimmerOnFailure: Boolean = true,
     ) : ShimmerInfo()
 }

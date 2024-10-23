@@ -9,7 +9,7 @@ import androidx.lifecycle.LifecycleOwner
 import com.monetization.appopen.AdmobAppOpenAd
 import com.monetization.appopen.AdmobAppOpenAdsManager
 import com.monetization.core.commons.AdsCommons.logAds
-import com.monetization.core.commons.SdkConfigs.isAdEnabled
+import com.monetization.core.commons.SdkConfigs.isRemoteAdEnabled
 import com.monetization.core.managers.AdsLoadingStatusListener
 import com.monetization.core.managers.FullScreenAdsShowListener
 import com.monetization.interstitials.AdmobInterstitialAd
@@ -64,7 +64,7 @@ class AdmobSplashAdController : DefaultLifecycleObserver {
         normalLoadingTime: Long = 1_000,
         normalLoadingDialog: (() -> Unit)? = null
     ) {
-        val enable = enableKey.isAdEnabled(adType.getAdKey())
+        val enable = enableKey.isRemoteAdEnabled(adType.getAdKey())
         this.listener = callBack
         this.activity = activity
         this.splashAdType = adType
@@ -102,7 +102,7 @@ class AdmobSplashAdController : DefaultLifecycleObserver {
                     if (splashNormalLoadingTime > 0) {
                         showLoadingDialog?.invoke()
                         try {
-                            Handler(Looper.getMainLooper()).postDelayed({
+                            handlerAd.postDelayed({
                                 showSplashAd(activity, adKey)
                             }, splashNormalLoadingTime)
                         } catch (_: Exception) {

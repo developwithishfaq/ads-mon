@@ -5,11 +5,11 @@ import com.google.android.gms.ads.AdRequest
 import com.google.android.gms.ads.LoadAdError
 import com.google.android.gms.ads.rewarded.RewardedAd
 import com.google.android.gms.ads.rewarded.RewardedAdLoadCallback
-import com.monetization.core.controllers.AdsControllerBaseHelper
-import com.monetization.core.managers.AdsLoadingStatusListener
 import com.monetization.core.ad_units.core.AdType
 import com.monetization.core.ad_units.core.AdUnit
+import com.monetization.core.controllers.AdsControllerBaseHelper
 import com.monetization.core.listeners.ControllersListener
+import com.monetization.core.managers.AdsLoadingStatusListener
 
 class AdmobRewardedAdsController(
     adKey: String, adIdsList: List<String>,
@@ -35,7 +35,6 @@ class AdmobRewardedAdsController(
                     super.onAdLoaded(ad)
                     currentRewardedAd = null
                     currentRewardedAd = AdmobRewardedAd(ad, getAdKey())
-                    onLoaded()
                     currentRewardedAd?.rewardedAd?.setOnPaidEventListener { paidListener ->
                         onAdRevenue(
                             value = paidListener.valueMicros,
@@ -43,6 +42,7 @@ class AdmobRewardedAdsController(
                             precisionType = paidListener.precisionType
                         )
                     }
+                    onLoaded()
                 }
 
                 override fun onAdFailedToLoad(error: LoadAdError) {

@@ -3,6 +3,7 @@ package com.example.adsxml.base
 import android.app.Application
 import com.monetization.adsmain.splash.AdmobSplashAdController
 import com.monetization.core.ad_units.core.AdType
+import com.monetization.core.commons.NativeTemplates
 import com.monetization.core.commons.SdkConfigs
 import com.monetization.core.commons.placementToAdWidgetModel
 import com.monetization.core.listeners.RemoteConfigsProvider
@@ -33,8 +34,12 @@ class BaseApp : Application() {
                 return SdkRemoteConfigController.getRemoteConfigBoolean(placementKey)
             }
 
+            override fun getLayoutName(placementKey: String, adKey: String): String {
+                return NativeTemplates.SmallNative
+            }
+
             override fun getAdWidgetData(placementKey: String, adKey: String): AdsWidgetData? {
-                return SdkRemoteConfigController.getRemoteConfigString(placementKey)
+                return SdkRemoteConfigController.getRemoteConfigString(placementKey+"_Placement")
                     .placementToAdWidgetModel()
             }
         })

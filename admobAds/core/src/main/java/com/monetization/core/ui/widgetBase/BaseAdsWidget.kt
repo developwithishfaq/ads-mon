@@ -38,12 +38,14 @@ abstract class BaseAdsWidget<T : AdsControllerBaseHelper> @JvmOverloads construc
     var isLoadAdCalled = false
     var activity: Activity? = null
     var key = ""
-    private var isAdEnabled = false
+    var isAdEnabled = false
     private var isViewInPause = false
     var adLoaded = false
     var oneTimeUse = false
     var requestNewOnShow = true
     var isValuesFromRemote = false
+    private var isForRefresh = false
+    private var showShimmer = true
     var shimmerInfo: ShimmerInfo = ShimmerInfo.GivenLayout()
     var uiListener: UiAdsListener? = null
 
@@ -69,7 +71,9 @@ abstract class BaseAdsWidget<T : AdsControllerBaseHelper> @JvmOverloads construc
         shimmerInfo: ShimmerInfo,
         adsManager: AdsManager<T>,
         adType: AdType,
-        listener: UiAdsListener?
+        listener: UiAdsListener?,
+        isForRefresh: Boolean = false,
+        showShimmer: Boolean = true
     ) {
         if (SdkConfigs.canShowAds(adKey, adType).not()) {
             logAds("Ad Showing is restricted against key=$adKey for $adType", true)
@@ -81,6 +85,8 @@ abstract class BaseAdsWidget<T : AdsControllerBaseHelper> @JvmOverloads construc
         this.key = adKey
         this.activity = activity
         this.oneTimeUse = oneTimeUse
+        this.showShimmer = showShimmer
+        this.isForRefresh = isForRefresh
         this.requestNewOnShow = requestNewOnShow
         this.isAdEnabled = enabled
         this.shimmerInfo = shimmerInfo
@@ -188,7 +194,9 @@ abstract class BaseAdsWidget<T : AdsControllerBaseHelper> @JvmOverloads construc
         }
         makeVisible()
         if (shimmerInfo != ShimmerInfo.None) {
-            showShimmerLayout()
+            if (showShimmer) {
+                showShimmerLayout()
+            }
         }
         loadAd()
     }
