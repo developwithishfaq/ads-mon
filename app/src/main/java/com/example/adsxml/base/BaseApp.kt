@@ -34,9 +34,6 @@ class BaseApp : Application() {
                 return SdkRemoteConfigController.getRemoteConfigBoolean(placementKey)
             }
 
-            override fun getLayoutName(placementKey: String, adKey: String): String {
-                return NativeTemplates.SmallNative
-            }
 
             override fun getAdWidgetData(placementKey: String, adKey: String): AdsWidgetData? {
                 return SdkRemoteConfigController.getRemoteConfigString(placementKey+"_Placement")
