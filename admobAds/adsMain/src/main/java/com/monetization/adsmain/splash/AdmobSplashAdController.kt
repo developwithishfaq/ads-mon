@@ -23,6 +23,7 @@ class AdmobSplashAdController : DefaultLifecycleObserver {
     private var enabled: Boolean = false
     private var mLifecycle: Lifecycle? = null
     private var isScreenInPause: Boolean = false
+    private var isAdShowing: Boolean = false
     private var isHandlerRunning: Boolean = false
     private var splashAdLoaded: Boolean = false
     private var splashAdFailed: Boolean = false
@@ -42,6 +43,7 @@ class AdmobSplashAdController : DefaultLifecycleObserver {
         isHandlerRunning = false
         splashAdLoaded = false
         splashAdFailed = false
+        isAdShowing = false
         runnableSplash = null
         splashAdTime = 8_000L
         mLifecycle = null
@@ -68,6 +70,7 @@ class AdmobSplashAdController : DefaultLifecycleObserver {
         this.listener = callBack
         this.activity = activity
         this.splashAdType = adType
+        this.isAdShowing = false
         this.mLifecycle = lifecycle
         this.splashAdTime = timeInMillis
         this.showLoadingDialog = normalLoadingDialog
@@ -99,6 +102,7 @@ class AdmobSplashAdController : DefaultLifecycleObserver {
                 logAds("Splash Ad onAdLoaded ,Handler Running=$isHandlerRunning")
                 if (isHandlerRunning) {
                     removeCallBacks()
+                    isAdShowing = true
                     if (splashNormalLoadingTime > 0) {
                         showLoadingDialog?.invoke()
                         try {
@@ -278,6 +282,9 @@ class AdmobSplashAdController : DefaultLifecycleObserver {
 
     override fun onPause(owner: LifecycleOwner) {
         super.onPause(owner)
+        if (isAdShowing) {
+            return
+        }
         logAds("Splash Ad On Pause", true)
         isScreenInPause = true
         removeCallBacks()
