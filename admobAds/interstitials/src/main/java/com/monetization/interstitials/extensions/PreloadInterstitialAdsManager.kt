@@ -20,7 +20,6 @@ object PreloadInterstitialAdsManager : AdmobBasePreloadAdsManager(AdType.INTERST
         onLoadingDialogStatusChange: (Boolean) -> Unit,
         onAdDismiss: (Boolean) -> Unit,
     ) {
-
         val controller = AdmobInterstitialAdsManager.getAdController(key)
         canShowAd(
             activity = activity,

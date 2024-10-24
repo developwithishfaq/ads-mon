@@ -25,7 +25,7 @@ fun AdsUiWidget.sdkNativeAd(
     listener: UiAdsListener? = null
 ) {
     apply {
-        attachWithLifecycle(lifecycle = lifecycle, false)
+        attachWithLifecycle(lifecycle = lifecycle, forBanner = false, isJetpackCompose = false)
         setWidgetKey(
             placementKey = placementKey,
             adKey = adKey,
@@ -57,7 +57,7 @@ fun AdsUiWidget.sdkBannerAd(
     listener: UiAdsListener? = null
 ) {
     apply {
-        attachWithLifecycle(lifecycle = lifecycle, true)
+        attachWithLifecycle(lifecycle = lifecycle, forBanner = true, isJetpackCompose = false)
         setWidgetKey(
             placementKey = placementKey, adKey = adKey,
             model = null,

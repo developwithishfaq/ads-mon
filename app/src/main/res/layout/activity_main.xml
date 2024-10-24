@@ -11,6 +11,10 @@
         android:id="@+id/adFrame"
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
+    <com.monetization.adsmain.widgets.AdsUiWidget
+        android:id="@+id/adFrameTwo"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
 
     <Button
         android:id="@+id/fetchConfig"

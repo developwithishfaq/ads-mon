@@ -15,13 +15,14 @@ import com.monetization.core.models.Loaded
 abstract class AdsControllerBaseHelper(
     private val adKey: String,
     private val adType: AdType,
-    private val adIdsList: List<String>,
+    adIdsList: List<String>,
     private val listener: ControllersListener?,
 ) : AdsController {
 
+    private var mAdIdsList = adIdsList
 
     init {
-        if (adIdsList.isEmpty()) {
+        if (mAdIdsList.isEmpty()) {
             throw IllegalArgumentException("Please Provide Ids For key=${adKey}, $adType,")
         }
     }
@@ -41,20 +42,24 @@ abstract class AdsControllerBaseHelper(
     private var loadingStateListener: AdsLoadingStatusListener? = null
 
 
+    override fun updateAdIds(list: List<String>) {
+        mAdIdsList = list
+    }
+
     override fun getAdId(): String {
         return try {
-            adIdsList[indexOfId]
+            mAdIdsList[indexOfId]
         } catch (_: Exception) {
             logAds("Exception In getAdId ", true)
-            adIdsList[0]
+            mAdIdsList[0]
         }
     }
 
     fun getAdIdAndIncrementIndex(): String {
         val current = indexOfId
-        val adId = AdsCommons.getAdId(indexOfId, adIdsList, adType) {
+        val adId = AdsCommons.getAdId(indexOfId, mAdIdsList, adType) {
         }
-        if (indexOfId >= adIdsList.size - 1) {
+        if (indexOfId >= mAdIdsList.size - 1) {
             indexOfId = 0
         } else {
             indexOfId += 1
@@ -213,7 +218,7 @@ abstract class AdsControllerBaseHelper(
     }
 
     override fun getAdIdsList(): List<String> {
-        return adIdsList
+        return mAdIdsList
     }
 
     override fun isAdRequesting(): Boolean {

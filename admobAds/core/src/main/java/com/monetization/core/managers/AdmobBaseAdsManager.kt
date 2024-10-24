@@ -1,7 +1,7 @@
 package com.monetization.core.managers
 
-import com.monetization.core.controllers.AdsControllerBaseHelper
 import com.monetization.core.ad_units.core.AdType
+import com.monetization.core.controllers.AdsControllerBaseHelper
 import com.monetization.core.history.AdsManagerHistoryHelper
 
 abstract class AdmobBaseAdsManager<T : AdsControllerBaseHelper>(adType: AdType) : AdsManager<T> {
@@ -10,6 +10,13 @@ abstract class AdmobBaseAdsManager<T : AdsControllerBaseHelper>(adType: AdType) 
 
     override fun getAdController(key: String): T? {
         return adsMap[key]
+    }
+
+    override fun updateIds(key: String, list: List<String>) {
+        if (adsMap.containsKey(key)) {
+            val controller = adsMap[key]
+            controller?.updateAdIds(list)
+        }
     }
 
     override fun addNewController(controller: T) {

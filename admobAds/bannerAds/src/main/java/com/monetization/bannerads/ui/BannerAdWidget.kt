@@ -18,6 +18,7 @@ import com.monetization.core.commons.NativeConstants.makeVisible
 import com.monetization.core.commons.NativeConstants.removeViewsFromIt
 import com.monetization.core.listeners.UiAdsListener
 import com.monetization.core.managers.AdsLoadingStatusListener
+import com.monetization.core.models.RefreshAdInfo
 import com.monetization.core.ui.ShimmerInfo
 import com.monetization.core.ui.widgetBase.BaseAdsWidget
 
@@ -169,8 +170,9 @@ class BannerAdWidget @JvmOverloads constructor(
         }
     }
 
-    fun refreshAd(showShimmer: Boolean) {
-        if (adPopulated) {
+    fun refreshAd(refreshAdInfo: RefreshAdInfo) {
+        if (adPopulated || (refreshAdInfo.requestNewIfAlreadyFailed && isAdFailedToLoad)) {
+            isAdFailedToLoad = false
             adPopulated = false
             isLoadAdCalled = false
             activity?.let {
@@ -182,10 +184,10 @@ class BannerAdWidget @JvmOverloads constructor(
                     enabled = isAdEnabled,
                     shimmerInfo = shimmerInfo,
                     adsManager = AdmobBannerAdsManager,
-                    adType = AdType.NATIVE,
+                    adType = AdType.BANNER,
                     listener = null,
                     isForRefresh = true,
-                    showShimmer = showShimmer
+                    refreshAdInfo = refreshAdInfo
                 )
             }
         }

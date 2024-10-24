@@ -14,6 +14,7 @@ import com.monetization.core.commons.AdsCommons.logAds
 import com.monetization.core.commons.SdkConfigs.getRemoteAdWidgetModel
 import com.monetization.core.commons.SdkConfigs.isRemoteAdEnabled
 import com.monetization.core.listeners.UiAdsListener
+import com.monetization.core.models.RefreshAdInfo
 import com.monetization.core.ui.AdsWidgetData
 import com.monetization.core.ui.LayoutInfo
 import com.monetization.core.ui.ShimmerInfo
@@ -70,12 +71,16 @@ class AdsUiWidget @JvmOverloads constructor(
         )
     }
 
-    fun attachWithLifecycle(lifecycle: Lifecycle, forBanner: Boolean = false) {
+    fun attachWithLifecycle(
+        lifecycle: Lifecycle,
+        forBanner: Boolean = false,
+        isJetpackCompose: Boolean
+    ) {
         if (lifecycle.currentState != Lifecycle.State.DESTROYED) {
             if (forBanner) {
-                bannerWidget.attachWithLifecycle(lifecycle)
+                bannerWidget.attachWithLifecycle(lifecycle, isJetpackCompose)
             } else {
-                nativeWidget.attachWithLifecycle(lifecycle)
+                nativeWidget.attachWithLifecycle(lifecycle, isJetpackCompose)
             }
         }
     }
@@ -102,7 +107,6 @@ class AdsUiWidget @JvmOverloads constructor(
                 listener = listener
             )
         } catch (_: Exception) {
-
         }
     }
 
@@ -163,11 +167,11 @@ class AdsUiWidget @JvmOverloads constructor(
         }
     }
 
-    fun refreshAd(isNativeAd: Boolean, showShimmerLayout: Boolean = false) {
+    fun refreshAd(isNativeAd: Boolean, refreshAdInfo: RefreshAdInfo = RefreshAdInfo()) {
         if (isNativeAd) {
-            nativeWidget.refreshAd(showShimmerLayout)
-        }else{
-            bannerWidget.refreshAd(showShimmerLayout)
+            nativeWidget.refreshAd(refreshAdInfo)
+        } else {
+            bannerWidget.refreshAd(refreshAdInfo)
         }
     }
 

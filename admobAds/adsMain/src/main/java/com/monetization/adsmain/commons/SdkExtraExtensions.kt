@@ -56,6 +56,32 @@ fun AdmobInterstitialAdsManager.addNewController(
     addNewController(AdmobInterstitialAdsController(adKey, adIdsList, listener))
 }
 
+fun addNewController(
+    adType: AdType,
+    adKey: String,
+    adIdsList: List<String>,
+    listener: ControllersListener? = null
+) {
+    when (adType) {
+        AdType.NATIVE -> AdmobNativeAdsManager.addNewController(adKey, adIdsList, listener)
+        AdType.INTERSTITIAL -> AdmobInterstitialAdsManager.addNewController(
+            adKey,
+            adIdsList,
+            listener
+        )
+
+        AdType.REWARDED -> AdmobRewardedAdsManager.addNewController(adKey, adIdsList, listener)
+        AdType.REWARDED_INTERSTITIAL -> AdmobRewardedInterAdsManager.addNewController(
+            adKey,
+            adIdsList,
+            listener
+        )
+
+        AdType.BANNER -> AdmobBannerAdsManager.addNewController(adKey, adIdsList, listener)
+        AdType.AppOpen -> AdmobAppOpenAdsManager.addNewController(adKey, adIdsList, listener)
+    }
+}
+
 fun AdmobNativeAdsManager.addNewController(
     adKey: String,
     adIdsList: List<String>,

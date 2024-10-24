@@ -13,6 +13,7 @@ import com.monetization.core.commons.AdsCommons.logAds
 import com.monetization.core.commons.NativeConstants.inflateLayoutByLayoutInfo
 import com.monetization.core.commons.NativeConstants.removeViewsFromIt
 import com.monetization.core.listeners.UiAdsListener
+import com.monetization.core.models.RefreshAdInfo
 import com.monetization.core.ui.LayoutInfo
 import com.monetization.core.ui.ShimmerInfo
 import com.monetization.core.ui.widgetBase.BaseAdsWidget
@@ -20,6 +21,9 @@ import com.monetization.nativeads.AdmobNativeAd
 import com.monetization.nativeads.AdmobNativeAdsController
 import com.monetization.nativeads.AdmobNativeAdsManager
 import com.monetization.nativeads.R
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
 class NativeAdWidget @JvmOverloads constructor(
     private val context: Context,
@@ -108,14 +112,16 @@ class NativeAdWidget @JvmOverloads constructor(
             is ShimmerInfo.GivenLayout -> {
                 val adLayout = layoutView?.inflateLayoutByLayoutInfo(activity!!)
                 if (info.shimmerColor != null) {
-                    listOf(
+                    (listOf(
                         adLayout?.findViewById<View?>(R.id.ad_headline),
                         adLayout?.findViewById<View?>(R.id.ad_body),
                         adLayout?.findViewById<View?>(R.id.tv_ad),
                         adLayout?.findViewById<View?>(R.id.ad_app_icon),
                         adLayout?.findViewById<View?>(R.id.ad_media),
                         adLayout?.findViewById<View?>(R.id.ad_call_to_action),
-                    ).forEach {
+                    ) + (info.idsToChangeColor).mapNotNull {
+                        adLayout?.findViewById(it)
+                    }).forEach {
                         it?.setBackgroundColor(
                             try {
                                 Color.parseColor(info.shimmerColor)
@@ -147,14 +153,17 @@ class NativeAdWidget @JvmOverloads constructor(
                 null
             }
         }
-        removeAllViews()
-        if (shimmerView != null) {
-            addView(shimmerView)
+        CoroutineScope(Dispatchers.Main).launch {
+            removeAllViews()
+            if (shimmerView != null) {
+                addView(shimmerView)
+            }
         }
     }
 
-    fun refreshAd(showShimmer: Boolean = false) {
-        if (adPopulated) {
+    fun refreshAd(refreshAdInfo: RefreshAdInfo) {
+        if (adPopulated || (refreshAdInfo.requestNewIfAlreadyFailed && isAdFailedToLoad)) {
+            isAdFailedToLoad = false
             adPopulated = false
             isLoadAdCalled = false
             activity?.let {
@@ -169,7 +178,7 @@ class NativeAdWidget @JvmOverloads constructor(
                     adType = AdType.NATIVE,
                     listener = null,
                     isForRefresh = true,
-                    showShimmer = showShimmer
+                    refreshAdInfo = refreshAdInfo
                 )
             }
         }

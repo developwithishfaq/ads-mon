@@ -1,55 +1,64 @@
 package com.example.adsxml
 
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import androidx.activity.ComponentActivity
-import androidx.activity.compose.setContent
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.runtime.setValue
-import com.example.adsxml.ads.AdsEntryManager
+import com.example.adsxml.databinding.ActivityMainBinding
+import com.monetization.adsmain.commons.sdkNativeAd
+import com.monetization.core.commons.NativeTemplates
+import com.monetization.core.listeners.UiAdsListener
+import com.remote.firebaseconfigs.RemoteCommons.toConfigString
 
 class ComposeActivity : ComponentActivity() {
 
+    private lateinit var binding: ActivityMainBinding
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        binding = ActivityMainBinding.inflate(layoutInflater)
+        setContentView(binding.root)
 
-        AdsEntryManager.initAds(this)
+        showNativeAd()
+        binding.showAd.setOnClickListener {
+            binding.adFrameTwo.refreshAd(isNativeAd = true)
+//            showNativeAdTwo()
+        }
+    }
 
-        setContent {
-//            val sdkNativeViewModel: SdkNativeViewModel = koinViewModel()
-            var showDialog by rememberSaveable {
-                mutableStateOf(false)
-            }/*
-            if (showDialog) {
-                Dialog(onDismissRequest = {
-                    sdkNativeViewModel.destroyAdByKey("Test")
-                    showDialog = false
-                }) {
-                    Surface {
+    private fun showNativeAd() {
+//        Handler(Looper.getMainLooper()).postDelayed({
+        binding.adFrameTwo.sdkNativeAd(
+            activity = this,
+            adLayout = NativeTemplates.LargeNative,
+            adKey = "Native",
+            placementKey = "SDK_TRUE",
+            showNewAdEveryTime = true,
+            lifecycle = lifecycle,
+            listener = object : UiAdsListener {
+                override fun onAdClicked(key: String) {
+                    super.onAdClicked(key)
+                }
+            }
+        )
+//        }, 10)
+    }
 
+    private fun showNativeAdTwo() {
+        Handler(Looper.getMainLooper()).postDelayed({
+            binding.adFrame.sdkNativeAd(
+                activity = this,
+                adLayout = NativeTemplates.LargeNative,
+                adKey = "Native",
+                placementKey = true.toConfigString(),
+                showNewAdEveryTime = true,
+                lifecycle = lifecycle,
+                listener = object : UiAdsListener {
+                    override fun onAdClicked(key: String) {
+                        super.onAdClicked(key)
                     }
                 }
-            }*/
-            /*Column {
-                SdkNativeAd(
-                    activity = this@ComposeActivity,
-                    adLayout = NativeTemplates.LargeNative,
-                    adKey = "Main",
-                    placementKey = true.toConfigString(),
-                    showNewAdEveryTime = true,
-                    sdkNativeViewModel = sdkNativeViewModel,
-                    showShimmerLayout = com.monetization.nativeads.R.layout.large_native_ad_shimmer.toShimmerView(
-                        this@ComposeActivity
-                    )
-                )
-                Button(onClick = {
-//                    AdType.INTERSTITIAL.loadAd("Main", this@ComposeActivity)
-                    showDialog = true
-                }) {
-
-                }
-            }*/
-        }
+            )
+        }, 10)
     }
 }

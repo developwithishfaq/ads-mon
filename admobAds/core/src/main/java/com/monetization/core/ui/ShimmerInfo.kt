@@ -9,6 +9,7 @@ sealed class ShimmerInfo(
     data object None : ShimmerInfo()
     data class GivenLayout(
         val shimmerColor: String? = "#E0E0E0",
+        val idsToChangeColor: List<Int> = listOf(),
         override val hideShimmerOnFailure: Boolean = true
     ) : ShimmerInfo()
 

@@ -21,8 +21,13 @@ import com.monetization.core.controllers.AdsControllerBaseHelper
 import com.monetization.core.listeners.UiAdsListener
 import com.monetization.core.managers.AdsLoadingStatusListener
 import com.monetization.core.managers.AdsManager
+import com.monetization.core.models.RefreshAdInfo
 import com.monetization.core.ui.AdsWidgetData
 import com.monetization.core.ui.ShimmerInfo
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
 abstract class BaseAdsWidget<T : AdsControllerBaseHelper> @JvmOverloads constructor(
     context: Context,
@@ -45,7 +50,8 @@ abstract class BaseAdsWidget<T : AdsControllerBaseHelper> @JvmOverloads construc
     var requestNewOnShow = true
     var isValuesFromRemote = false
     private var isForRefresh = false
-    private var showShimmer = true
+    var isAdFailedToLoad = false
+    private var refreshAdInfo: RefreshAdInfo = RefreshAdInfo()
     var shimmerInfo: ShimmerInfo = ShimmerInfo.GivenLayout()
     var uiListener: UiAdsListener? = null
 
@@ -58,8 +64,11 @@ abstract class BaseAdsWidget<T : AdsControllerBaseHelper> @JvmOverloads construc
         this.adsWidgetData = adsWidgetData
     }
 
-    fun attachWithLifecycle(lifecycle: Lifecycle) {
+    fun attachWithLifecycle(lifecycle: Lifecycle, isJetpackCompose: Boolean) {
         this.lifecycle = lifecycle
+        if (isJetpackCompose.not()) {
+            this.lifecycle?.addObserver(this)
+        }
     }
 
     fun onShowAdCalled(
@@ -73,7 +82,7 @@ abstract class BaseAdsWidget<T : AdsControllerBaseHelper> @JvmOverloads construc
         adType: AdType,
         listener: UiAdsListener?,
         isForRefresh: Boolean = false,
-        showShimmer: Boolean = true
+        refreshAdInfo: RefreshAdInfo = RefreshAdInfo()
     ) {
         if (SdkConfigs.canShowAds(adKey, adType).not()) {
             logAds("Ad Showing is restricted against key=$adKey for $adType", true)
@@ -81,35 +90,46 @@ abstract class BaseAdsWidget<T : AdsControllerBaseHelper> @JvmOverloads construc
             return
         }
         makeVisible()
-        this.uiListener = listener
+        if (isForRefresh.not()) {
+            this.uiListener = listener
+        }
         this.key = adKey
         this.activity = activity
         this.oneTimeUse = oneTimeUse
-        this.showShimmer = showShimmer
+        this.refreshAdInfo = refreshAdInfo
         this.isForRefresh = isForRefresh
         this.requestNewOnShow = requestNewOnShow
         this.isAdEnabled = enabled
         this.shimmerInfo = shimmerInfo
         this.adsManager = adsManager
+        this.isAdFailedToLoad = false
         this.adLoaded = false
         this.isShowAdCalled = true
         this.adPopulated = false
-
-        loadAdCalled(adsManager)
+        CoroutineScope(Dispatchers.IO).launch {
+            delay(100)
+            loadAdCalled(adsManager)
+        }
     }
 
     fun getAdsLoadingListener(): AdsLoadingStatusListener {
         return object : AdsLoadingStatusListener {
             override fun onAdRequested(adKey: String) {
-                uiListener?.onAdRequested(adKey)
+                CoroutineScope(Dispatchers.Main).launch {
+                    uiListener?.onAdRequested(adKey)
+                }
             }
 
             override fun onClicked(adKey: String) {
-                uiListener?.onAdClicked(adKey)
+                CoroutineScope(Dispatchers.Main).launch {
+                    uiListener?.onAdClicked(adKey)
+                }
             }
 
             override fun onAdLoaded(adKey: String) {
-                uiListener?.onAdLoaded(adKey)
+                CoroutineScope(Dispatchers.Main).launch {
+                    uiListener?.onAdLoaded(adKey)
+                }
                 if (adLoaded) {
                     return
                 }
@@ -140,8 +160,15 @@ abstract class BaseAdsWidget<T : AdsControllerBaseHelper> @JvmOverloads construc
     }
 
     fun adOnFailed() {
-        if (shimmerInfo.hideShimmerOnFailure) {
-            makeGone()
+        isAdFailedToLoad = true
+        if (isForRefresh.not()) {
+            if (shimmerInfo.hideShimmerOnFailure) {
+                makeGone()
+            }
+        } else if (refreshAdInfo.hideAdOnFailure) {
+            if (shimmerInfo.hideShimmerOnFailure) {
+                makeGone()
+            }
         }
     }
 
@@ -194,7 +221,11 @@ abstract class BaseAdsWidget<T : AdsControllerBaseHelper> @JvmOverloads construc
         }
         makeVisible()
         if (shimmerInfo != ShimmerInfo.None) {
-            if (showShimmer) {
+            if (isForRefresh) {
+                if (refreshAdInfo.showShimmer) {
+                    showShimmerLayout()
+                }
+            } else {
                 showShimmerLayout()
             }
         }
@@ -202,12 +233,14 @@ abstract class BaseAdsWidget<T : AdsControllerBaseHelper> @JvmOverloads construc
     }
 
     private fun doPopulateAd() {
-        logAds("doPopulateAd(key=$key) isViewInPause=${isViewInPause}", isViewInPause)
-        if (isViewInPause.not()) {
-            adPopulated = true
-            makeVisible()
-            removeAllViews()
-            populateAd()
+        CoroutineScope(Dispatchers.Main).launch {
+            logAds("doPopulateAd(key=$key) isViewInPause=${isViewInPause}", isViewInPause)
+            if (isViewInPause.not()) {
+                adPopulated = true
+                makeVisible()
+                removeAllViews()
+                populateAd()
+            }
         }
     }
 

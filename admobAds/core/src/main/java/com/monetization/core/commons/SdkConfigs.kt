@@ -1,29 +1,80 @@
 package com.monetization.core.commons
 
-import android.content.Context
 import com.facebook.shimmer.BuildConfig
 import com.monetization.core.ad_units.core.AdType
 import com.monetization.core.commons.AdsCommons.logAds
 import com.monetization.core.listeners.RemoteConfigsProvider
 import com.monetization.core.listeners.SdkListener
+import com.monetization.core.models.ManualBlockModel
 import com.monetization.core.ui.AdsWidgetData
-import java.util.UUID
 
 object SdkConfigs {
 
     private var isTestModeEnabled = BuildConfig.DEBUG
     private var disableAllAds = false
+    private var manualBlockList = mutableListOf<ManualBlockModel>()
 
-
-    fun getUserId(context: Context): String {
-        val prefs = context.getSharedPreferences("sdkPrefs", Context.MODE_PRIVATE)
-        var userId = prefs.getString("userId", "") ?: ""
-        if (userId.isNotBlank()) {
-            return userId
+    fun isAdManuallyBlockedForLoad(adKey: String, adType: AdType): Boolean {
+        val index = manualBlockList.indexOfFirst {
+            it.adKey == adKey && adType == it.adType
+        }
+        return if (index != -1) {
+            manualBlockList[index].blockForLoad
         } else {
-            userId = UUID.randomUUID().toString()
-            prefs.edit().putString("userId", userId).apply()
-            return userId
+            false
+        }
+    }
+
+    fun isAdManuallyBlockedOverAll(adKey: String, adType: AdType) =
+        isAdManuallyBlockedForLoad(adKey, adType) && isAdManuallyBlockedForShow(adKey, adType)
+
+    fun isAdManuallyBlockedForShow(adKey: String, adType: AdType): Boolean {
+        val index = manualBlockList.indexOfFirst {
+            it.adKey == adKey && adType == it.adType
+        }
+        return if (index != -1) {
+            manualBlockList[index].blockForShow
+        } else {
+            false
+        }
+    }
+
+    fun unBlockAd(adKey: String, adType: AdType) {
+        val index = manualBlockList.indexOfFirst {
+            it.adKey == adKey && it.adType == adType
+        }
+        if (index != -1) {
+            manualBlockList.removeAt(index)
+        }
+    }
+
+    fun blockAd(
+        adKey: String,
+        adType: AdType,
+        blockForShow: Boolean = true,
+        blockForLoad: Boolean = true
+    ) {
+        val index = manualBlockList.indexOfFirst {
+            it.adKey == adKey && it.adType == adType
+        }
+        if (blockForLoad || blockForShow) {
+            if (index == -1) {
+                manualBlockList.add(
+                    ManualBlockModel(
+                        adKey = adKey,
+                        adType = adType,
+                        blockForShow = blockForShow,
+                        blockForLoad = blockForLoad
+                    )
+                )
+            } else {
+                manualBlockList[index] = ManualBlockModel(
+                    adKey = adKey,
+                    adType = adType,
+                    blockForShow = blockForShow,
+                    blockForLoad = blockForLoad
+                )
+            }
         }
     }
 
@@ -54,7 +105,10 @@ object SdkConfigs {
         return configListener?.isAdEnabled(this, key) ?: def
     }
 
-    fun String.getRemoteAdWidgetModel(key:String, model: AdsWidgetData? = null): AdsWidgetData? {
+    fun String.getRemoteAdWidgetModel(
+        key: String,
+        model: AdsWidgetData? = null
+    ): AdsWidgetData? {
         if (configListener == null) {
             throw IllegalArgumentException("Please set Remote Config Listener by call setRemoteConfigsListener(this)")
         }
@@ -83,6 +137,8 @@ object SdkConfigs {
         } else if (disableAllAds) {
             logAds("All Ads Are Disabled by developer", true)
             return false
+        } else if (isAdManuallyBlockedForShow(adKey, adType)) {
+            return false
         } else {
             return sdkListener?.canShowAd(adType, adKey) ?: false
         }
@@ -93,6 +149,8 @@ object SdkConfigs {
             throw IllegalArgumentException("Please attach sdk listeners like SdkConfigs.setListener(this)")
         } else if (disableAllAds) {
             logAds("All Ads Are Disabled by developer", true)
+            return false
+        } else if (isAdManuallyBlockedForLoad(adKey, adType)) {
             return false
         } else {
             return sdkListener?.canLoadAd(adType, adKey) ?: false
