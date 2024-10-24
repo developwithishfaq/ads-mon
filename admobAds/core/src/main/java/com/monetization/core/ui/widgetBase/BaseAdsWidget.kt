@@ -106,9 +106,13 @@ abstract class BaseAdsWidget<T : AdsControllerBaseHelper> @JvmOverloads construc
         this.adLoaded = false
         this.isShowAdCalled = true
         this.adPopulated = false
-        CoroutineScope(Dispatchers.IO).launch {
-            delay(100)
+        if (adType == AdType.BANNER) {
             loadAdCalled(adsManager)
+        } else {
+            CoroutineScope(Dispatchers.IO).launch {
+                delay(100)
+                loadAdCalled(adsManager)
+            }
         }
     }
 

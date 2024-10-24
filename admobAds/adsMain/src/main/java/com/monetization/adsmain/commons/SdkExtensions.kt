@@ -20,6 +20,7 @@ fun AdsUiWidget.sdkNativeAd(
     showShimmerLayout: ShimmerInfo = ShimmerInfo.GivenLayout(),
     requestNewOnShow: Boolean = false,
     showNewAdEveryTime: Boolean = true,
+    showOnlyIfAdAvailable: Boolean = false,
     defaultEnable: Boolean = true,
     adsWidgetData: AdsWidgetData? = null,
     listener: UiAdsListener? = null
@@ -39,7 +40,8 @@ fun AdsUiWidget.sdkNativeAd(
             shimmerInfo = showShimmerLayout,
             oneTimeUse = showNewAdEveryTime,
             requestNewOnShow = requestNewOnShow,
-            listener = listener
+            listener = listener,
+            showOnlyIfAdAvailable = showOnlyIfAdAvailable
         )
     }
 }
@@ -53,6 +55,7 @@ fun AdsUiWidget.sdkBannerAd(
     showShimmerLayout: ShimmerInfo = ShimmerInfo.GivenLayout(),
     requestNewOnShow: Boolean = false,
     showNewAdEveryTime: Boolean = true,
+    showOnlyIfAdAvailable: Boolean = false,
     defaultEnable: Boolean = true,
     listener: UiAdsListener? = null
 ) {
@@ -70,7 +73,8 @@ fun AdsUiWidget.sdkBannerAd(
             shimmerInfo = showShimmerLayout,
             oneTimeUse = showNewAdEveryTime,
             requestNewOnShow = requestNewOnShow,
-            listener = listener
+            listener = listener,
+            showOnlyIfAdAvailable = showOnlyIfAdAvailable
         )
     }
 }

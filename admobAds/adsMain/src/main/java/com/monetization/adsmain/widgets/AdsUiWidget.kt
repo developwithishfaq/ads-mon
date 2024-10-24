@@ -7,9 +7,11 @@ import android.view.ViewGroup
 import android.widget.FrameLayout
 import androidx.lifecycle.DefaultLifecycleObserver
 import androidx.lifecycle.Lifecycle
+import com.monetization.adsmain.commons.isAdAvailable
 import com.monetization.bannerads.BannerAdSize
 import com.monetization.bannerads.BannerAdType
 import com.monetization.bannerads.ui.BannerAdWidget
+import com.monetization.core.ad_units.core.AdType
 import com.monetization.core.commons.AdsCommons.logAds
 import com.monetization.core.commons.SdkConfigs.getRemoteAdWidgetModel
 import com.monetization.core.commons.SdkConfigs.isRemoteAdEnabled
@@ -92,8 +94,13 @@ class AdsUiWidget @JvmOverloads constructor(
         shimmerInfo: ShimmerInfo = ShimmerInfo.GivenLayout(),
         oneTimeUse: Boolean = true,
         requestNewOnShow: Boolean = true,
+        showOnlyIfAdAvailable: Boolean = false,
         listener: UiAdsListener? = null
     ) {
+        if (showOnlyIfAdAvailable && adKey.isAdAvailable(AdType.NATIVE).not()) {
+            listener?.onAdFailed(adKey, msg = "Because No Ad Is Available Against key=$adKey", -1)
+            return
+        }
         removeAndAdNativeWidget()
         try {
             nativeWidget.showNativeAdmob(
@@ -118,8 +125,13 @@ class AdsUiWidget @JvmOverloads constructor(
         shimmerInfo: ShimmerInfo = ShimmerInfo.GivenLayout(),
         oneTimeUse: Boolean = true,
         requestNewOnShow: Boolean = true,
+        showOnlyIfAdAvailable: Boolean = true,
         listener: UiAdsListener? = null
     ) {
+        if (showOnlyIfAdAvailable && adKey.isAdAvailable(AdType.NATIVE).not()) {
+            listener?.onAdFailed(adKey, msg = "Because No Ad Is Available Against key=$adKey", -1)
+            return
+        }
         removeAndAdBannerWidget()
         try {
             bannerWidget.showBannerAdmob(

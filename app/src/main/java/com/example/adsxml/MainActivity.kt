@@ -1,5 +1,6 @@
 package com.example.adsxml
 
+import android.content.Intent
 import android.os.Bundle
 import android.widget.Toast
 import androidx.activity.ComponentActivity
@@ -21,8 +22,8 @@ import com.monetization.core.listeners.UiAdsListener
 import com.monetization.core.utils.dialog.SdkDialogs
 import com.monetization.core.utils.dialog.showNormalLoadingDialog
 import com.monetization.interstitials.AdmobInterstitialAdsManager
-import com.monetization.interstitials.extensions.counter.InstantCounterInterAdsManager
 import com.monetization.interstitials.extensions.InstantInterstitialAdsManager
+import com.monetization.interstitials.extensions.counter.InstantCounterInterAdsManager
 import com.monetization.nativeads.AdmobNativeAdsManager
 import com.remote.firebaseconfigs.RemoteCommons.toConfigString
 import com.remote.firebaseconfigs.SdkConfigListener
@@ -67,6 +68,7 @@ class MainActivity : ComponentActivity() {
                 "ca-app-pub-3940256099942544/2247696110"
             )
         )
+        "Native".loadAd(AdType.NATIVE, this)
         AdmobBannerAdsManager.addNewController(
             "Banner", listOf("", "", "", "")
         )
@@ -98,9 +100,8 @@ class MainActivity : ComponentActivity() {
             "Native".loadAd(AdType.INTERSTITIAL, this@MainActivity)
         }
         binding.showAd.setOnClickListener {
-            showCounterAd {
-
-            }
+            startActivity(Intent(this, ComposeActivity::class.java))
+//            showCounterAd {}
         }
         binding.reloadAd.setOnClickListener {
             refreshAd()
@@ -169,6 +170,7 @@ class MainActivity : ComponentActivity() {
             adKey = "Banner",
             placementKey = true.toConfigString(),
             showNewAdEveryTime = true,
+            showOnlyIfAdAvailable = true,
             lifecycle = lifecycle,
             listener = object : UiAdsListener {
                 override fun onAdClicked(key: String) {
