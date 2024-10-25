@@ -4,6 +4,7 @@ import android.app.Activity
 import android.content.Context
 import android.util.AttributeSet
 import android.view.LayoutInflater
+import android.view.ViewGroup
 import com.facebook.shimmer.ShimmerFrameLayout
 import com.monetization.bannerads.AdmobBannerAd
 import com.monetization.bannerads.AdmobBannerAdsController
@@ -130,48 +131,60 @@ class BannerAdWidget @JvmOverloads constructor(
 
 
     override fun showShimmerLayout() {
-        val info = shimmerInfo
-        val shimmerLayout = LayoutInflater.from(activity)
-            .inflate(com.monetization.core.R.layout.shimmer, null, false)
-            ?.findViewById<ShimmerFrameLayout>(com.monetization.core.R.id.shimmerRoot)
-        val shimmerView: ShimmerFrameLayout? = when (info) {
-            is ShimmerInfo.GivenLayout -> {
-                val layoutForShimmer = when (bannerAdType) {
-                    is BannerAdType.Collapsible -> {
-                        "adapter_banner_shimmer"
-                    }
+        try {
+            val info = shimmerInfo
+            val shimmerLayout = LayoutInflater.from(activity)
+                .inflate(com.monetization.core.R.layout.shimmer, null, false)
+                ?.findViewById<ShimmerFrameLayout>(com.monetization.core.R.id.shimmerRoot)
+            val shimmerView = when (info) {
+                is ShimmerInfo.GivenLayout -> {
+                    val layoutForShimmer = when (bannerAdType) {
+                        is BannerAdType.Collapsible -> {
+                            "adapter_banner_shimmer"
+                        }
 
-                    is BannerAdType.Normal -> {
-                        when ((bannerAdType as BannerAdType.Normal).size) {
-                            BannerAdSize.AdaptiveBanner -> "adapter_banner_shimmer"
-                            BannerAdSize.MediumRectangle -> "rectangular_banner_shimmer"
-                            BannerAdSize.Banner -> "adapter_banner_shimmer"
+                        is BannerAdType.Normal -> {
+                            when ((bannerAdType as BannerAdType.Normal).size) {
+                                BannerAdSize.AdaptiveBanner -> "adapter_banner_shimmer"
+                                BannerAdSize.MediumRectangle -> "rectangular_banner_shimmer"
+                                BannerAdSize.Banner -> "adapter_banner_shimmer"
+                            }
                         }
                     }
-                }
-                val adLayout = layoutForShimmer.inflateLayoutByName(activity!!)
-                shimmerLayout?.removeViewsFromIt()
-                shimmerLayout?.addView(adLayout)
-                shimmerLayout
-            }
-
-            is ShimmerInfo.ShimmerByView -> {
-                info.layoutView?.let {
+                    val adLayout = layoutForShimmer.inflateLayoutByName(activity!!)
                     shimmerLayout?.removeViewsFromIt()
-                    shimmerLayout?.addView(it)
+                    shimmerLayout?.addView(adLayout)
                     shimmerLayout
                 }
-            }
 
-            ShimmerInfo.None -> {
-                null
+                is ShimmerInfo.ShimmerByView -> {
+                    if (info.addInAShimmerView) {
+                        info.layoutView?.let { view ->
+                            (view.parent as? ViewGroup)?.removeView(view)
+                            shimmerLayout?.removeViewsFromIt()
+                            shimmerLayout?.addView(view)
+                            shimmerLayout
+                        } ?: run { null }
+                    } else {
+                        info.layoutView
+                    }
+                }
+
+                ShimmerInfo.None -> {
+                    null
+                }
             }
-        }
-        CoroutineScope(Dispatchers.Main).launch {
-            removeAllViews()
-            if (shimmerView != null) {
-                addView(shimmerView)
+            CoroutineScope(Dispatchers.Main).launch {
+                removeAllViews()
+                if (shimmerView != null) {
+                    (parent as? ViewGroup)?.removeView(shimmerView)
+                    post {
+                        addView(shimmerView)
+                    }
+                }
             }
+        } catch (e: Exception) {
+            logAds("showShimmerLayout Banner=${key} Exception=${e.stackTrace}", true)
         }
     }
 

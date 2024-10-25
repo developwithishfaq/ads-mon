@@ -12,7 +12,7 @@ object InstantCounterRewInterManager {
         enableKey: String,
         activity: Activity,
         key: String,
-        counterKey: String,
+        counterKey: String? ,
         normalLoadingTime: Long = 1_000,
         instantLoadingTime: Long = 8_000,
         requestNewIfAdShown: Boolean = false,
@@ -20,7 +20,11 @@ object InstantCounterRewInterManager {
         onRewarded: (Boolean) -> Unit,
         onAdDismiss: (Boolean) -> Unit,
     ) {
-        counterWrapper(counterKey, onAdDismiss) {
+        counterWrapper(
+            counterEnable = !counterKey.isNullOrBlank(),
+            key = counterKey,
+            onDismiss = onAdDismiss
+        ) {
             InstantRewardedInterAdsManager.showInstantRewardedInterstitialAd(enableKey = enableKey,
                 activity = activity,
                 key = key,

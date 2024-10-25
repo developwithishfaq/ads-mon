@@ -11,14 +11,18 @@ object InstantCounterInterAdsManager {
         placementKey: String,
         activity: Activity,
         key: String,
-        counterKey: String,
+        counterKey: String?,
         normalLoadingTime: Long = 1_000,
         instantLoadingTime: Long = 8_000,
         requestNewIfAdShown: Boolean = false,
         onLoadingDialogStatusChange: (Boolean) -> Unit,
         onAdDismiss: (Boolean) -> Unit,
     ) {
-        counterWrapper(counterKey, onAdDismiss) {
+        counterWrapper(
+            counterEnable = !counterKey.isNullOrBlank(),
+            key = counterKey,
+            onDismiss = onAdDismiss
+        ) {
             InstantInterstitialAdsManager.showInstantInterstitialAd(
                 placementKey = placementKey,
                 activity = activity,

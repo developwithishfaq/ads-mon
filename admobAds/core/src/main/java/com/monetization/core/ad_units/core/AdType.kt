@@ -2,13 +2,13 @@ package com.monetization.core.ad_units.core
 
 import com.monetization.core.commons.TestAds
 
-enum class AdType {
+enum class AdType(val isFullScreenAds: Boolean = false) {
     NATIVE,
-    INTERSTITIAL,
-    REWARDED,
-    REWARDED_INTERSTITIAL,
+    INTERSTITIAL(true),
+    REWARDED(true),
+    REWARDED_INTERSTITIAL(true),
     BANNER,
-    AppOpen
+    AppOpen(true)
 }
 
 fun AdType.getTestAdId(): String {

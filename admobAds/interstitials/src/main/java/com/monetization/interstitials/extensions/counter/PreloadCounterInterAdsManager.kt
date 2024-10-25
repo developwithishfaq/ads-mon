@@ -10,7 +10,7 @@ object PreloadCounterInterAdsManager {
     fun tryShowingInterstitialAd(
         placementKey: String,
         key: String,
-        counterKey: String,
+        counterKey: String? ,
         activity: Activity,
         requestNewIfNotAvailable: Boolean = false,
         requestNewIfAdShown: Boolean = false,
@@ -18,7 +18,7 @@ object PreloadCounterInterAdsManager {
         onLoadingDialogStatusChange: (Boolean) -> Unit,
         onAdDismiss: (Boolean) -> Unit,
     ) {
-        counterWrapper(counterKey, onAdDismiss) {
+        counterWrapper(counterEnable = !counterKey.isNullOrBlank(), key = counterKey, onDismiss = onAdDismiss) {
             PreloadInterstitialAdsManager.tryShowingInterstitialAd(
                 placementKey = placementKey,
                 key = key,

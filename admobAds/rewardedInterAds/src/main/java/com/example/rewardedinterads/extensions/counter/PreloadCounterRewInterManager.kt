@@ -10,7 +10,7 @@ object PreloadCounterRewInterManager {
     fun tryShowingRewardedInterAd(
         placementKey: String,
         key: String,
-        counterKey: String,
+        counterKey: String? ,
         activity: Activity,
         requestNewIfNotAvailable: Boolean = true,
         requestNewIfAdShown: Boolean = true,
@@ -19,7 +19,11 @@ object PreloadCounterRewInterManager {
         onRewarded: (Boolean) -> Unit,
         onAdDismiss: (Boolean) -> Unit,
     ) {
-        counterWrapper(counterKey, onAdDismiss) {
+        counterWrapper(
+            counterEnable = !counterKey.isNullOrBlank(),
+            key = counterKey,
+            onDismiss = onAdDismiss
+        ) {
             PreloadRewardedInterAdsManager.tryShowingRewardedInterAd(
                 placementKey = placementKey,
                 key = key,

@@ -10,7 +10,12 @@ object CounterManager {
         counters[key] = info
     }
 
-    fun adShownCounterReact(counterKey: String, adShown: Boolean) {
+    fun String.isCounterRegistered() = counters[this] != null
+
+    fun adShownCounterReact(counterKey: String?, adShown: Boolean) {
+        if (counterKey == null) {
+            return
+        }
         val model = counterKey.getCounterModel()
         val strategy = if (adShown) {
             model.adShownStrategy
@@ -28,14 +33,28 @@ object CounterManager {
             is CounterStrategies.SetStartingTo -> {
                 counterKey.changeCurrentCounter(strategy.startPoint)
             }
+
+            CounterStrategies.HalfValue -> {
+                val max = model.maxPoint
+                if (max != 0) {
+                    counterKey.changeCurrentCounter(max / 2)
+                } else {
+                    counterKey.changeCurrentCounter(0)
+                }
+            }
         }
     }
 
     fun counterWrapper(
-        key: String,
+        counterEnable: Boolean,
+        key: String?,
         onDismiss: (Boolean) -> Unit,
         showAd: () -> Unit
     ) {
+        if (counterEnable.not() || key == null) {
+            showAd.invoke()
+            return
+        }
         val model = key.getCounterModel()
         val counterReached = model.isCounterReached()
         if (counterReached) {

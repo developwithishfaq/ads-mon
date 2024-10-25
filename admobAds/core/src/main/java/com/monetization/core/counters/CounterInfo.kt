@@ -12,5 +12,6 @@ data class CounterInfo(
 sealed class CounterStrategies {
     data object KeepSameValue : CounterStrategies()
     data object ResetToZero : CounterStrategies()
+    data object HalfValue : CounterStrategies()
     data class SetStartingTo(val startPoint: Int) : CounterStrategies()
 }

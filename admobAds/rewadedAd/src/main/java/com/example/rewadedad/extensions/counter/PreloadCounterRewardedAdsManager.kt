@@ -10,7 +10,7 @@ object PreloadCounterRewardedAdsManager {
     fun tryShowingRewardedAd(
         placementKey: String,
         key: String,
-        counterKey: String,
+        counterKey: String? ,
         activity: Activity,
         requestNewIfNotAvailable: Boolean = true,
         requestNewIfAdShown: Boolean = true,
@@ -19,7 +19,11 @@ object PreloadCounterRewardedAdsManager {
         onRewarded: (Boolean) -> Unit,
         onAdDismiss: (Boolean) -> Unit,
     ) {
-        counterWrapper(counterKey, onAdDismiss) {
+        counterWrapper(
+            counterEnable = !counterKey.isNullOrBlank(),
+            key = counterKey,
+            onDismiss = onAdDismiss
+        ) {
             PreloadRewardedAdsManager.tryShowingRewardedAd(
                 placementKey = placementKey,
                 key = key,
