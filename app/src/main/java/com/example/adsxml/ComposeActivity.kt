@@ -38,9 +38,9 @@ class ComposeActivity : ComponentActivity() {
             activity = this,
             adLayout = NativeTemplates.LargeNative,
             adKey = "Native",
-            placementKey = "SDK_TRUE",
+            placementKey = true.toConfigString(),
             showNewAdEveryTime = true,
-            showOnlyIfAdAvailable = true,
+            showOnlyIfAdAvailable = false,
             lifecycle = lifecycle,
             listener = object : UiAdsListener {
                 override fun onAdClicked(key: String) {

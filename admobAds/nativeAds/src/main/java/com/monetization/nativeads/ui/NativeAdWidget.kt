@@ -145,10 +145,14 @@ class NativeAdWidget @JvmOverloads constructor(
                 is ShimmerInfo.ShimmerByView -> {
                     if (info.addInAShimmerView) {
                         info.layoutView?.let { view ->
-                            (view.parent as? ViewGroup)?.removeView(view)
-                            shimmerLayout?.removeViewsFromIt()
-                            shimmerLayout?.addView(view)
-                            shimmerLayout
+                            try {
+                                (view.parent as? ViewGroup)?.removeView(view)
+                                shimmerLayout?.removeViewsFromIt()
+                                shimmerLayout?.addView(view)
+                                shimmerLayout
+                            } catch (e: Exception) {
+                                null
+                            }
                         } ?: run { null }
                     } else {
                         info.layoutView
@@ -162,9 +166,10 @@ class NativeAdWidget @JvmOverloads constructor(
             CoroutineScope(Dispatchers.Main).launch {
                 removeAllViews()
                 if (shimmerView != null) {
-                    (parent as? ViewGroup)?.removeView(shimmerView)
-                    post {
+                    try {
                         addView(shimmerView)
+                    } catch (_: Exception) {
+
                     }
                 }
             }
