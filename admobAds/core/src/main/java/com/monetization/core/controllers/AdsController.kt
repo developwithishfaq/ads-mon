@@ -9,6 +9,8 @@ import com.monetization.core.managers.AdsLoadingStatusListener
 
 interface AdsController {
     fun setAdEnabled(enabled: Boolean) {}
+    fun saveInHistory(adUnit: AdUnit) {}
+    fun getHistory(): List<AdUnit>
     fun updateAdIds(list: List<String>) {}
     fun loadAd(activity: Activity, calledFrom: String, callback: AdsLoadingStatusListener?) {}
     fun resetListener(activity: Activity) {}

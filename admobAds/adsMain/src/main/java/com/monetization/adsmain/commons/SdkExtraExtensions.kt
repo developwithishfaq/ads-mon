@@ -40,6 +40,10 @@ fun String.isAdAvailable(adType: AdType): Boolean {
     return getAdController(adType)?.isAdAvailable() ?: false
 }
 
+fun String.isAdAvailableOrRequesting(adType: AdType): Boolean {
+    return getAdController(adType)?.isAdAvailableOrRequesting() ?: false
+}
+
 fun String.getAdIdToRequest(adType: AdType): String? {
     return getAdController(adType)?.getAdId()
 }

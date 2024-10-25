@@ -95,6 +95,7 @@ class AdsUiWidget @JvmOverloads constructor(
         oneTimeUse: Boolean = true,
         requestNewOnShow: Boolean = true,
         showOnlyIfAdAvailable: Boolean = false,
+        showFromHistory: Boolean = false,
         listener: UiAdsListener? = null
     ) {
         if (showOnlyIfAdAvailable && adKey.isAdAvailable(AdType.NATIVE).not()) {
@@ -111,7 +112,8 @@ class AdsUiWidget @JvmOverloads constructor(
                 shimmerInfo = shimmerInfo,
                 oneTimeUse = oneTimeUse,
                 requestNewOnShow = requestNewOnShow,
-                listener = listener
+                listener = listener,
+                showFromHistory = showFromHistory
             )
         } catch (_: Exception) {
         }
@@ -128,7 +130,7 @@ class AdsUiWidget @JvmOverloads constructor(
         showOnlyIfAdAvailable: Boolean = true,
         listener: UiAdsListener? = null
     ) {
-        if (showOnlyIfAdAvailable && adKey.isAdAvailable(AdType.NATIVE).not()) {
+        if (showOnlyIfAdAvailable && adKey.isAdAvailable(AdType.BANNER).not()) {
             listener?.onAdFailed(adKey, msg = "Because No Ad Is Available Against key=$adKey", -1)
             return
         }

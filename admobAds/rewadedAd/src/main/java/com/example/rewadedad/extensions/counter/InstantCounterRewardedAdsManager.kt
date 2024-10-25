@@ -8,7 +8,7 @@ import com.monetization.core.counters.CounterManager.counterWrapper
 object InstantCounterRewardedAdsManager {
 
     fun showInstantRewardedAd(
-        enableKey: String,
+        placementKey: String,
         activity: Activity,
         key: String,
         counterKey: String? ,
@@ -25,7 +25,7 @@ object InstantCounterRewardedAdsManager {
             onDismiss = onAdDismiss
         ) {
             InstantRewardedAdsManager.showInstantRewardedAd(
-                enableKey = enableKey,
+                placementKey = placementKey,
                 activity = activity,
                 key = key,
                 normalLoadingTime = normalLoadingTime,

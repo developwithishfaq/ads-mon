@@ -6,8 +6,10 @@ import android.os.Looper
 import androidx.lifecycle.DefaultLifecycleObserver
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleOwner
+import com.monetization.adsmain.showRates.loadings.ShowRateAdsLoadings.loadAdWithSR
 import com.monetization.appopen.AdmobAppOpenAd
 import com.monetization.appopen.AdmobAppOpenAdsManager
+import com.monetization.core.ad_units.core.AdType
 import com.monetization.core.commons.AdsCommons.logAds
 import com.monetization.core.commons.SdkConfigs.isRemoteAdEnabled
 import com.monetization.core.managers.AdsLoadingStatusListener
@@ -27,6 +29,7 @@ class AdmobSplashAdController : DefaultLifecycleObserver {
     private var isHandlerRunning: Boolean = false
     private var splashAdLoaded: Boolean = false
     private var splashAdFailed: Boolean = false
+    private var bestShowRatesEnabled: Boolean = false
     private val handlerAd = Handler(Looper.getMainLooper())
     private var runnableSplash: Runnable? = null
     private var splashAdTime = 8_000L
@@ -43,6 +46,7 @@ class AdmobSplashAdController : DefaultLifecycleObserver {
         isHandlerRunning = false
         splashAdLoaded = false
         splashAdFailed = false
+        bestShowRatesEnabled = false
         isAdShowing = false
         runnableSplash = null
         splashAdTime = 8_000L
@@ -64,6 +68,7 @@ class AdmobSplashAdController : DefaultLifecycleObserver {
         callBack: FullScreenAdsShowListener,
         lifecycle: Lifecycle,
         normalLoadingTime: Long = 1_000,
+        bestShowRatesEnabled: Boolean = false,
         normalLoadingDialog: (() -> Unit)? = null
     ) {
         val enable = enableKey.isRemoteAdEnabled(adType.getAdKey())
@@ -71,6 +76,7 @@ class AdmobSplashAdController : DefaultLifecycleObserver {
         this.activity = activity
         this.splashAdType = adType
         this.isAdShowing = false
+        this.bestShowRatesEnabled = bestShowRatesEnabled
         this.mLifecycle = lifecycle
         this.splashAdTime = timeInMillis
         this.showLoadingDialog = normalLoadingDialog
@@ -196,15 +202,12 @@ class AdmobSplashAdController : DefaultLifecycleObserver {
             return
         }
         val adKey = (splashAdType as SplashAdType.AdmobAppOpen).key
-        val adController =
-            AdmobAppOpenAdsManager.getAdController(adKey)
+        val adController = AdmobAppOpenAdsManager.getAdController(adKey)
         if (adController == null) {
             callback.onAdFailedToLoad(adKey, "No Controller for app open splash")
             return
         }
-        adController.loadAd(
-            activity,
-            "Splash Load App Open",
+        val listener =
             object : AdsLoadingStatusListener {
                 override fun onAdLoaded(adKey: String) {
                     appOpenAd = adController.getAvailableAd() as? AdmobAppOpenAd
@@ -219,7 +222,12 @@ class AdmobSplashAdController : DefaultLifecycleObserver {
                     appOpenAd = null
                     callback.onAdFailedToLoad(message)
                 }
-            })
+            }
+        if (bestShowRatesEnabled) {
+            adKey.loadAdWithSR(AdType.AppOpen, activity, listener)
+        } else {
+            adController.loadAd(activity, "Splash AppOpne", listener)
+        }
 
     }
 
@@ -234,24 +242,26 @@ class AdmobSplashAdController : DefaultLifecycleObserver {
             callback.onAdFailedToLoad(adKey, "loadInterstitialAd adController == null, key=$adKey")
             return
         }
-        adController.loadAd(
-            activity,
-            "Splash Load Interstitial",
-            object : AdsLoadingStatusListener {
-                override fun onAdLoaded(adKey: String) {
-                    interstitialAd = adController.getAvailableAd() as? AdmobInterstitialAd
-                    if (interstitialAd != null) {
-                        callback.onAdLoaded(adKey)
-                    } else {
-                        callback.onAdFailedToLoad(adKey, " onAdLoaded interstitialAd == null")
-                    }
+        val listener = object : AdsLoadingStatusListener {
+            override fun onAdLoaded(adKey: String) {
+                interstitialAd = adController.getAvailableAd() as? AdmobInterstitialAd
+                if (interstitialAd != null) {
+                    callback.onAdLoaded(adKey)
+                } else {
+                    callback.onAdFailedToLoad(adKey, " onAdLoaded interstitialAd == null")
                 }
+            }
 
-                override fun onAdFailedToLoad(adKey: String, message: String, code: Int) {
-                    interstitialAd = null
-                    callback.onAdFailedToLoad(message)
-                }
-            })
+            override fun onAdFailedToLoad(adKey: String, message: String, code: Int) {
+                interstitialAd = null
+                callback.onAdFailedToLoad(message)
+            }
+        }
+        if (bestShowRatesEnabled) {
+            adKey.loadAdWithSR(AdType.INTERSTITIAL, activity, listener)
+        } else {
+            adController.loadAd(activity, "Splash Inter", listener)
+        }
 
     }
 

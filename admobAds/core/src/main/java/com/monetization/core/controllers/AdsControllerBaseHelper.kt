@@ -2,6 +2,7 @@ package com.monetization.core.controllers
 
 import android.app.Activity
 import com.monetization.core.ad_units.core.AdType
+import com.monetization.core.ad_units.core.AdUnit
 import com.monetization.core.commons.AdsCommons
 import com.monetization.core.commons.AdsCommons.logAds
 import com.monetization.core.commons.SdkConfigs
@@ -27,6 +28,7 @@ abstract class AdsControllerBaseHelper(
         }
     }
 
+    private var adsHistory = mutableListOf<AdUnit>()
     private var canRequestAd = true
     private var isAdEnabled = true
     private var indexOfId = 0
@@ -41,6 +43,13 @@ abstract class AdsControllerBaseHelper(
 
     private var loadingStateListener: AdsLoadingStatusListener? = null
 
+    override fun saveInHistory(adUnit: AdUnit) {
+        adsHistory.add(adUnit)
+    }
+
+    override fun getHistory(): List<AdUnit> {
+        return adsHistory
+    }
 
     override fun updateAdIds(list: List<String>) {
         mAdIdsList = list

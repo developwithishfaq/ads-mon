@@ -49,6 +49,7 @@ abstract class BaseAdsWidget<T : AdsControllerBaseHelper> @JvmOverloads construc
     var oneTimeUse = false
     var requestNewOnShow = true
     var isValuesFromRemote = false
+    var showFromHistory = false
     private var isForRefresh = false
     var isAdFailedToLoad = false
     private var refreshAdInfo: RefreshAdInfo = RefreshAdInfo()
@@ -82,6 +83,7 @@ abstract class BaseAdsWidget<T : AdsControllerBaseHelper> @JvmOverloads construc
         adType: AdType,
         listener: UiAdsListener?,
         isForRefresh: Boolean = false,
+        showFromHistory: Boolean = false,
         refreshAdInfo: RefreshAdInfo = RefreshAdInfo()
     ) {
         if (SdkConfigs.canShowAds(adKey, adType).not()) {
@@ -94,6 +96,7 @@ abstract class BaseAdsWidget<T : AdsControllerBaseHelper> @JvmOverloads construc
             this.uiListener = listener
         }
         this.key = adKey
+        this.showFromHistory = showFromHistory
         this.activity = activity
         this.oneTimeUse = oneTimeUse
         this.refreshAdInfo = refreshAdInfo
@@ -153,7 +156,11 @@ abstract class BaseAdsWidget<T : AdsControllerBaseHelper> @JvmOverloads construc
 
     fun adOnLoaded() {
         adLoaded = true
-        adUnit = adsController?.getAvailableAd()
+        adUnit = if (showFromHistory && adsController?.getHistory()?.isNotEmpty() == true) {
+            adsController?.getHistory()?.get(0)
+        } else {
+            adsController?.getAvailableAd()
+        }
         logAds(
             "${activity?.getGoodName()} Native=On Ad Loaded,Is Ad Ok=${adUnit != null}",
             isError = adUnit == null

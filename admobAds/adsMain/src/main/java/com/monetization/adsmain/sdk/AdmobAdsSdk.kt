@@ -10,6 +10,7 @@ import kotlinx.coroutines.launch
 class AdmobAdsSdk(
 ) {
     private var isSdkInitialized = false
+
     fun initAdsSdk(
         context: Context,
         initAdsSdk: Boolean = true,
@@ -34,13 +35,4 @@ class AdmobAdsSdk(
             MobileAds.setAppMuted(true)
         }
     }
-    /*
-        private fun initFirebase(context: Context, onInitialized: () -> Unit) {
-            if (isFirebaseInitialized) {
-                return
-            }
-            isFirebaseInitialized = true
-            Sdk.initFirebase(context)
-            onInitialized.invoke()
-        }*/
 }

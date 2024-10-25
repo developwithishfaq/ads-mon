@@ -12,7 +12,7 @@ object InstantAppOpenAdsManager : AdmobBaseInstantAdsManager(AdType.AppOpen) {
 
 
     fun showInstantAppOpenAd(
-        enableKey: String,
+        placementKey: String,
         activity: Activity,
         key: String,
         normalLoadingTime: Long = 1_000,
@@ -25,7 +25,7 @@ object InstantAppOpenAdsManager : AdmobBaseInstantAdsManager(AdType.AppOpen) {
         val controller = AdmobAppOpenAdsManager.getAdController(key)
         canShowAd(
             activity = activity,
-            placementKey = enableKey,
+            placementKey = placementKey,
             normalLoadingTime = normalLoadingTime,
             instantLoadingTime = instantLoadingTime,
             controller = controller,

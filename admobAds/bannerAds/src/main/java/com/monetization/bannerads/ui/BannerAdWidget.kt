@@ -213,7 +213,7 @@ class BannerAdWidget @JvmOverloads constructor(
                     adType = AdType.BANNER,
                     listener = null,
                     isForRefresh = true,
-                    refreshAdInfo = refreshAdInfo
+                    refreshAdInfo = refreshAdInfo,
                 )
             }
         }

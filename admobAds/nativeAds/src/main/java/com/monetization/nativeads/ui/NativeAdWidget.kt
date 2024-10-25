@@ -47,6 +47,7 @@ class NativeAdWidget @JvmOverloads constructor(
         shimmerInfo: ShimmerInfo = ShimmerInfo.GivenLayout(),
         oneTimeUse: Boolean = true,
         requestNewOnShow: Boolean = true,
+        showFromHistory: Boolean = false,
         listener: UiAdsListener? = null
     ) {
         this.layoutView = if (isValuesFromRemote) {
@@ -67,17 +68,23 @@ class NativeAdWidget @JvmOverloads constructor(
             shimmerInfo = shimmerInfo,
             adsManager = AdmobNativeAdsManager,
             adType = AdType.NATIVE,
-            listener = listener
+            listener = listener,
+            showFromHistory = showFromHistory
         )
         logAds("showNativeAd called($key),enabled=$enabled,layoutView=$layoutView")
     }
 
     override fun loadAd() {
-        (adsController as? AdmobNativeAdsController)?.loadAd(
-            activity = (activity!!),
-            calledFrom = "Base Native Activity",
-            callback = getAdsLoadingListener()
-        )
+        val listener = getAdsLoadingListener()
+        if (showFromHistory && adsController?.getHistory()?.isNotEmpty() == true) {
+            listener.onAdLoaded(key)
+        } else {
+            (adsController as? AdmobNativeAdsController)?.loadAd(
+                activity = (activity!!),
+                calledFrom = "Base Native Activity",
+                callback = listener
+            )
+        }
     }
 
     override fun populateAd() {
@@ -91,6 +98,7 @@ class NativeAdWidget @JvmOverloads constructor(
         adUnit?.let {
             addView(layout)
             admobNativeView?.let { view ->
+
                 (it as AdmobNativeAd).populateAd(activity!!, view, adsWidgetData) {
                     if (oneTimeUse) {
                         adsController?.destroyAd(activity!!)
