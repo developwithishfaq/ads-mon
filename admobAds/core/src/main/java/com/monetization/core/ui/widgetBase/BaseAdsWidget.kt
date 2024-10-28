@@ -26,7 +26,6 @@ import com.monetization.core.ui.AdsWidgetData
 import com.monetization.core.ui.ShimmerInfo
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 abstract class BaseAdsWidget<T : AdsControllerBaseHelper> @JvmOverloads constructor(
@@ -109,14 +108,7 @@ abstract class BaseAdsWidget<T : AdsControllerBaseHelper> @JvmOverloads construc
         this.adLoaded = false
         this.isShowAdCalled = true
         this.adPopulated = false
-        if (adType == AdType.BANNER) {
-            loadAdCalled(adsManager)
-        } else {
-            CoroutineScope(Dispatchers.IO).launch {
-                delay(100)
-                loadAdCalled(adsManager)
-            }
-        }
+        loadAdCalled(adsManager)
     }
 
     fun getAdsLoadingListener(): AdsLoadingStatusListener {
@@ -144,12 +136,16 @@ abstract class BaseAdsWidget<T : AdsControllerBaseHelper> @JvmOverloads construc
             }
 
             override fun onImpression(adKey: String) {
-                uiListener?.onImpression(adKey)
+                CoroutineScope(Dispatchers.Main).launch {
+                    uiListener?.onImpression(adKey)
+                }
             }
 
             override fun onAdFailedToLoad(adKey: String, message: String, code: Int) {
-                uiListener?.onAdFailed(adKey, message, code)
-                adOnFailed()
+                CoroutineScope(Dispatchers.Main).launch {
+                    uiListener?.onAdFailed(adKey, message, code)
+                    adOnFailed()
+                }
             }
         }
     }

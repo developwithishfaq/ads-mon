@@ -79,11 +79,13 @@ class NativeAdWidget @JvmOverloads constructor(
         if (showFromHistory && adsController?.getHistory()?.isNotEmpty() == true) {
             listener.onAdLoaded(key)
         } else {
-            (adsController as? AdmobNativeAdsController)?.loadAd(
-                activity = (activity!!),
-                calledFrom = "Base Native Activity",
-                callback = listener
-            )
+            CoroutineScope(Dispatchers.IO).launch {
+                (adsController as? AdmobNativeAdsController)?.loadAd(
+                    activity = (activity!!),
+                    calledFrom = "Base Native Activity",
+                    callback = listener
+                )
+            }
         }
     }
 
