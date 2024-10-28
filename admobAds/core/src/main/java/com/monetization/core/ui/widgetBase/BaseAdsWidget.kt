@@ -128,11 +128,11 @@ abstract class BaseAdsWidget<T : AdsControllerBaseHelper> @JvmOverloads construc
             override fun onAdLoaded(adKey: String) {
                 CoroutineScope(Dispatchers.Main).launch {
                     uiListener?.onAdLoaded(adKey)
+                    if (adLoaded) {
+                        return@launch
+                    }
+                    adOnLoaded()
                 }
-                if (adLoaded) {
-                    return
-                }
-                adOnLoaded()
             }
 
             override fun onImpression(adKey: String) {
