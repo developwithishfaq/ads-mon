@@ -6,10 +6,10 @@ import android.os.Looper
 import androidx.lifecycle.DefaultLifecycleObserver
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleOwner
-import com.monetization.adsmain.showRates.loadings.ShowRateAdsLoadings.loadAdWithSR
 import com.monetization.appopen.AdmobAppOpenAd
 import com.monetization.appopen.AdmobAppOpenAdsManager
 import com.monetization.core.ad_units.core.AdType
+import com.monetization.core.commons.AdsCommons.adEnabledSdkString
 import com.monetization.core.commons.AdsCommons.logAds
 import com.monetization.core.commons.SdkConfigs.isRemoteAdEnabled
 import com.monetization.core.managers.AdsLoadingStatusListener
@@ -71,7 +71,7 @@ class AdmobSplashAdController : DefaultLifecycleObserver {
         bestShowRatesEnabled: Boolean = false,
         normalLoadingDialog: (() -> Unit)? = null
     ) {
-        val enable = enableKey.isRemoteAdEnabled(adType.getAdKey())
+        val enable = enableKey.isRemoteAdEnabled(adType.getAdKey(), AdType.INTERSTITIAL)
         this.listener = callBack
         this.activity = activity
         this.splashAdType = adType
@@ -223,11 +223,12 @@ class AdmobSplashAdController : DefaultLifecycleObserver {
                     callback.onAdFailedToLoad(message)
                 }
             }
-        if (bestShowRatesEnabled) {
-            adKey.loadAdWithSR(AdType.AppOpen, activity, listener)
-        } else {
-            adController.loadAd(activity, "Splash AppOpne", listener)
-        }
+        adController.loadAd(
+            placementKey = adEnabledSdkString,
+            activity = activity,
+            calledFrom = "Splash AppOpen",
+            callback = listener
+        )
 
     }
 
@@ -257,12 +258,12 @@ class AdmobSplashAdController : DefaultLifecycleObserver {
                 callback.onAdFailedToLoad(message)
             }
         }
-        if (bestShowRatesEnabled) {
-            adKey.loadAdWithSR(AdType.INTERSTITIAL, activity, listener)
-        } else {
-            adController.loadAd(activity, "Splash Inter", listener)
-        }
-
+        adController.loadAd(
+            placementKey = adEnabledSdkString,
+            activity = activity,
+            calledFrom = "Splash Inter",
+            callback = listener
+        )
     }
 
     private fun onAdDismissed(key: String, adShown: Boolean = false) {

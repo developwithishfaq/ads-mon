@@ -1,5 +1,6 @@
 package com.monetization.core.utils.dialog
 
+import android.app.Activity
 import android.app.Dialog
 import android.content.Context
 import android.content.res.ColorStateList
@@ -11,7 +12,7 @@ import com.monetization.core.commons.NativeConstants.makeVisible
 import com.monetization.core.databinding.SdkLoadingDialogBinding
 
 class SdkDialogs(
-    private val context: Context
+    private val context: Activity
 ) {
     private var loadingDialog: Dialog? = null
 

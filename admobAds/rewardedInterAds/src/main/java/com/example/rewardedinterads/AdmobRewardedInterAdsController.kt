@@ -19,11 +19,12 @@ class AdmobRewardedInterAdsController(
 
 
     override fun loadAd(
+        placementKey: String,
         activity: Activity,
         calledFrom: String,
-        callback: AdsLoadingStatusListener?,
+        callback: AdsLoadingStatusListener?
     ) {
-        val commonLoadChecks = commonLoadAdChecks(callback)
+        val commonLoadChecks = commonLoadAdChecks(placementKey = placementKey, callback = callback)
         if (commonLoadChecks.not()) {
             return
         }
@@ -49,7 +50,7 @@ class AdmobRewardedInterAdsController(
                 override fun onAdFailedToLoad(error: LoadAdError) {
                     super.onAdFailedToLoad(error)
                     rewardedInterAd = null
-                    onAdFailed(error.message,error.code)
+                    onAdFailed(error.message, error.code)
                 }
             })
         onAdRequested()

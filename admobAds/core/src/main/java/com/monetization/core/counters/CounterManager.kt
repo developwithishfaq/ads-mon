@@ -49,6 +49,7 @@ object CounterManager {
     fun counterWrapper(
         counterEnable: Boolean,
         key: String?,
+        onCounterUpdate: ((Int) -> Unit)? = null,
         onDismiss: (Boolean, MessagesType?) -> Unit,
         showAd: () -> Unit
     ) {
@@ -60,10 +61,12 @@ object CounterManager {
         val counterReached = model.isCounterReached()
         if (counterReached) {
             logCounterDetails("Counter Reached")
+            onCounterUpdate?.invoke(model.currentPoint)
             showAd.invoke()
         } else {
             key.incrementCounter()
             logCounterDetails("Counter Progress: Current=${key.getCounterModel().currentPoint},Target=${model.maxPoint}")
+            onCounterUpdate?.invoke(model.currentPoint)
             onDismiss.invoke(false, MessagesType.CounterNotReached)
         }
     }

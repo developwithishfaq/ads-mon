@@ -13,6 +13,9 @@ import com.monetization.core.msgs.MessagesType
 object AdsCommons {
 
     var isDebugMode = BuildConfig.DEBUG
+
+    var adEnabledSdkString = "SDK_TRUE"
+
     var isFullScreenAdShowing = false
     fun logAds(message: String, isError: Boolean = false) {
         if (isError) {
@@ -74,6 +77,11 @@ object AdsCommons {
                 uiAdsListener?.onImpression(adKey)
             }
 
+            override fun onRewarded(adKey: String) {
+                super.onRewarded(adKey)
+                uiAdsListener?.onRewarded(adKey)
+            }
+
             override fun onAdClick(adKey: String) {
                 super.onAdClick(adKey)
                 uiAdsListener?.onAdClicked(adKey)
@@ -92,7 +100,7 @@ object AdsCommons {
                 }
                 onFreeAd.invoke(null, adShown)
                 if (requestNewIfAdShown && adShown) {
-                    controller.loadAd(activity, "", null)
+                    controller.loadAd(placementKey = adEnabledSdkString, activity, "", null)
                 }
             }
         }

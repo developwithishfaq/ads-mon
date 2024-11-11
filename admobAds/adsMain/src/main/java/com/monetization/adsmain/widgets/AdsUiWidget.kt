@@ -52,6 +52,7 @@ class AdsUiWidget @JvmOverloads constructor(
     fun setWidgetKey(
         placementKey: String,
         adKey: String,
+        isNativeAd: Boolean,
         model: AdsWidgetData?,
         defEnabled: Boolean = true
     ) {
@@ -61,7 +62,13 @@ class AdsUiWidget @JvmOverloads constructor(
         }
 
         val (enabled, widgetModel) = Pair(
-            placementKey.isRemoteAdEnabled(adKey, defEnabled),
+            placementKey.isRemoteAdEnabled(
+                key = adKey, adType = if (isNativeAd) {
+                    AdType.NATIVE
+                } else {
+                    AdType.BANNER
+                }, def = defEnabled
+            ),
             placementKey.getRemoteAdWidgetModel(adKey, model)
         )
 

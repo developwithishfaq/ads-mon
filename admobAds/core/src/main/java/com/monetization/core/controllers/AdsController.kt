@@ -12,7 +12,14 @@ interface AdsController {
     fun saveInHistory(adUnit: AdUnit) {}
     fun getHistory(): List<AdUnit>
     fun updateAdIds(list: List<String>) {}
-    fun loadAd(activity: Activity, calledFrom: String, callback: AdsLoadingStatusListener?) {}
+    fun loadAd(
+        placementKey: String,
+        activity: Activity,
+        calledFrom: String,
+        callback: AdsLoadingStatusListener?
+    ) {
+    }
+
     fun resetListener(activity: Activity) {}
     fun setControllerListener(listener: ControllersListener?) {}
     fun setListener(activity: Activity, callback: AdsLoadingStatusListener) {}

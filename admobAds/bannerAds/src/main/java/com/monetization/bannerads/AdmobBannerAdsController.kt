@@ -23,12 +23,13 @@ class AdmobBannerAdsController(
     private var currentBannerAd: AdmobBannerAd? = null
 
     fun loadBannerAd(
+        placementKey: String,
         activity: Activity,
         calledFrom: String,
         callback: AdsLoadingStatusListener?,
         bannerAdType: BannerAdType = BannerAdType.Normal(BannerAdSize.AdaptiveBanner),
     ) {
-        val commonLoadChecks = commonLoadAdChecks(callback)
+        val commonLoadChecks = commonLoadAdChecks(placementKey = placementKey, callback = callback)
         if (commonLoadChecks.not()) {
             return
         }
@@ -97,9 +98,10 @@ class AdmobBannerAdsController(
     }
 
     override fun loadAd(
+        placementKey: String,
         activity: Activity,
         calledFrom: String,
-        callback: AdsLoadingStatusListener?,
+        callback: AdsLoadingStatusListener?
     ) {
         throw IllegalArgumentException("Please Call loadBannerAd function")
     }

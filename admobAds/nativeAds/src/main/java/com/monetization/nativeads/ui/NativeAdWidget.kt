@@ -10,6 +10,7 @@ import android.view.ViewGroup
 import androidx.core.content.ContextCompat
 import com.facebook.shimmer.ShimmerFrameLayout
 import com.monetization.core.ad_units.core.AdType
+import com.monetization.core.commons.AdsCommons.adEnabledSdkString
 import com.monetization.core.commons.AdsCommons.logAds
 import com.monetization.core.commons.NativeConstants.inflateLayoutByLayoutInfo
 import com.monetization.core.commons.NativeConstants.removeViewsFromIt
@@ -81,6 +82,7 @@ class NativeAdWidget @JvmOverloads constructor(
         } else {
             CoroutineScope(Dispatchers.IO).launch {
                 (adsController as? AdmobNativeAdsController)?.loadAd(
+                    placementKey = adEnabledSdkString,
                     activity = (activity!!),
                     calledFrom = "Base Native Activity",
                     callback = listener
@@ -105,7 +107,12 @@ class NativeAdWidget @JvmOverloads constructor(
                     if (oneTimeUse) {
                         adsController?.destroyAd(activity!!)
                         if (requestNewOnShow) {
-                            adsController?.loadAd(activity!!, "requestNewOnShow", null)
+                            adsController?.loadAd(
+                                placementKey = adEnabledSdkString,
+                                activity = activity!!,
+                                calledFrom = "requestNewOnShow",
+                                callback = null
+                            )
                         }
                     }
                     refreshLayout()

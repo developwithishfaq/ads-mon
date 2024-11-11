@@ -5,5 +5,6 @@ interface FullScreenAdsShowListener {
     fun onAdShown(adKey: String) {}
     fun onAdShownFailed(adKey: String) {}
     fun onAdClick(adKey: String) {}
+    fun onRewarded(adKey: String) {}
     fun onShowBlackBg(adKey: String, show: Boolean) {}
 }

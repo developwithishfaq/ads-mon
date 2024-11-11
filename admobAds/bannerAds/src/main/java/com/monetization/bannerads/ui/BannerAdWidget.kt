@@ -12,6 +12,7 @@ import com.monetization.bannerads.AdmobBannerAdsManager
 import com.monetization.bannerads.BannerAdSize
 import com.monetization.bannerads.BannerAdType
 import com.monetization.core.ad_units.core.AdType
+import com.monetization.core.commons.AdsCommons.adEnabledSdkString
 import com.monetization.core.commons.AdsCommons.logAds
 import com.monetization.core.commons.NativeConstants.inflateLayoutByName
 import com.monetization.core.commons.NativeConstants.makeGone
@@ -66,6 +67,7 @@ class BannerAdWidget @JvmOverloads constructor(
             activity = activity!!,
             bannerAdType = bannerAdType,
             calledFrom = "Base Banner Activity",
+            placementKey = adEnabledSdkString,
             callback = object : AdsLoadingStatusListener {
                 override fun onAdRequested(adKey: String) {
                     uiListener?.onAdRequested(adKey)
@@ -108,7 +110,8 @@ class BannerAdWidget @JvmOverloads constructor(
                             activity = activity!!,
                             calledFrom = "",
                             callback = null,
-                            bannerAdType = bannerAdType
+                            bannerAdType = bannerAdType,
+                            placementKey = adEnabledSdkString
                         )
                     }
                 }

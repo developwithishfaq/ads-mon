@@ -7,6 +7,7 @@ import com.monetization.core.managers.AdmobBaseInstantAdsManager
 import com.monetization.core.managers.FullScreenAdsShowListener
 import com.monetization.core.ad_units.core.AdType
 import com.monetization.core.commons.AdsCommons
+import com.monetization.core.listeners.UiAdsListener
 import com.monetization.core.msgs.MessagesType
 
 object InstantAppOpenAdsManager : AdmobBaseInstantAdsManager(AdType.AppOpen) {
@@ -18,6 +19,7 @@ object InstantAppOpenAdsManager : AdmobBaseInstantAdsManager(AdType.AppOpen) {
         key: String,
         normalLoadingTime: Long = 1_000,
         instantLoadingTime: Long = 8_000,
+        uiAdsListener: UiAdsListener? = null,
         requestNewIfAdShown: Boolean = false,
         onLoadingDialogStatusChange: (Boolean) -> Unit,
         showBlackBg: ((Boolean) -> Unit),
@@ -30,6 +32,7 @@ object InstantAppOpenAdsManager : AdmobBaseInstantAdsManager(AdType.AppOpen) {
             normalLoadingTime = normalLoadingTime,
             instantLoadingTime = instantLoadingTime,
             controller = controller,
+            uiAdsListener = uiAdsListener,
             onLoadingDialogStatusChange = onLoadingDialogStatusChange,
             onAdDismiss = onAdDismiss,
             showAd = {

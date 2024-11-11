@@ -3,6 +3,7 @@ package com.monetization.interstitials.extensions.counter
 import android.app.Activity
 import com.monetization.core.counters.CounterManager
 import com.monetization.core.counters.CounterManager.counterWrapper
+import com.monetization.core.listeners.UiAdsListener
 import com.monetization.core.msgs.MessagesType
 import com.monetization.interstitials.extensions.InstantInterstitialAdsManager
 
@@ -16,12 +17,15 @@ object InstantCounterInterAdsManager {
         normalLoadingTime: Long = 1_000,
         instantLoadingTime: Long = 8_000,
         requestNewIfAdShown: Boolean = false,
+        uiAdsListener: UiAdsListener? = null,
+        onCounterUpdate: ((Int) -> Unit)? = null,
         onLoadingDialogStatusChange: (Boolean) -> Unit,
-        onAdDismiss: (Boolean,MessagesType?) -> Unit,
+        onAdDismiss: (Boolean, MessagesType?) -> Unit,
     ) {
         counterWrapper(
             counterEnable = !counterKey.isNullOrBlank(),
             key = counterKey,
+            onCounterUpdate = onCounterUpdate,
             onDismiss = onAdDismiss
         ) {
             InstantInterstitialAdsManager.showInstantInterstitialAd(
@@ -31,10 +35,11 @@ object InstantCounterInterAdsManager {
                 normalLoadingTime = normalLoadingTime,
                 instantLoadingTime = instantLoadingTime,
                 requestNewIfAdShown = requestNewIfAdShown,
+                uiAdsListener = uiAdsListener,
                 onLoadingDialogStatusChange = onLoadingDialogStatusChange,
-                onAdDismiss = { adShown,msg ->
+                onAdDismiss = { adShown, msg ->
                     CounterManager.adShownCounterReact(counterKey, adShown)
-                    onAdDismiss.invoke(adShown,msg)
+                    onAdDismiss.invoke(adShown, msg)
                 }
             )
         }

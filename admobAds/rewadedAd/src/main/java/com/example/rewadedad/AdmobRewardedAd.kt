@@ -16,7 +16,10 @@ class AdmobRewardedAd(
 ) : GeneralInterOrAppOpenAd {
     private var rewardEarned = false
 
-    override fun showAd(activity: Activity, callBack: FullScreenAdsShowListener) {
+    override fun showAd(
+        activity: Activity,
+        callBack: FullScreenAdsShowListener
+    ) {
         if (AdsCommons.isFullScreenAdShowing) {
             return
         }
@@ -57,7 +60,10 @@ class AdmobRewardedAd(
         }
         rewardedAd.show(
             activity
-        ) { rewardEarned = true }
+        ) {
+            rewardEarned = true
+            callBack.onRewarded(adKey)
+        }
     }
 
     override fun destroyAd() {

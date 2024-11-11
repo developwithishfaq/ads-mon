@@ -15,17 +15,18 @@ import com.monetization.core.listeners.ControllersListener
 class AdmobInterstitialAdsController(
     adKey: String,
     adIdsList: List<String>,
-    listener: ControllersListener?= null
-) : AdsControllerBaseHelper(adKey, AdType.INTERSTITIAL, adIdsList,listener) {
+    listener: ControllersListener? = null
+) : AdsControllerBaseHelper(adKey, AdType.INTERSTITIAL, adIdsList, listener) {
     private var currentInterstitialAd: AdmobInterstitialAd? = null
 
     override fun loadAd(
+        placementKey: String,
         activity: Activity,
         calledFrom: String,
-        callback: AdsLoadingStatusListener?,
+        callback: AdsLoadingStatusListener?
     ) {
 
-        val commonLoadChecks = commonLoadAdChecks(callback)
+        val commonLoadChecks = commonLoadAdChecks(placementKey = placementKey, callback = callback)
         if (commonLoadChecks.not()) {
             return
         }
@@ -61,7 +62,7 @@ class AdmobInterstitialAdsController(
     }
 
     override fun destroyAd(activity: Activity?) {
-        logAds("Inter Ad(${getAdKey()}) Destroyed,Id=${getAdId()}",true)
+        logAds("Inter Ad(${getAdKey()}) Destroyed,Id=${getAdId()}", true)
         currentInterstitialAd = null
     }
 

@@ -6,7 +6,6 @@ import com.monetization.adsmain.commons.isAdAvailableOrRequesting
 import com.monetization.adsmain.commons.isAdRequesting
 import com.monetization.adsmain.showRates.ShowRatesHelper
 import com.monetization.adsmain.showRates.full_screen_ads.FullScreenAdsShowManager.showFullScreenAd
-import com.monetization.adsmain.showRates.loadings.ShowRateAdsLoadings.loadAdWithSR
 import com.monetization.adsmain.showRates.models.IgnoreAfterEffects
 import com.monetization.adsmain.showRates.models.IgnoreNewRequest
 import com.monetization.adsmain.showRates.models.ignoreIfAnyOtherRequestingOrLoadedAd
@@ -16,6 +15,7 @@ import com.monetization.core.msgs.MessagesType
 import com.monetization.core.showRates.ShowRatesCommons
 
 val showRatesHelper = ShowRatesHelper()
+/*
 
 object ShowRateFullScreenAds {
 
@@ -162,4 +162,4 @@ object ShowRateFullScreenAds {
             onAdDismiss.invoke(false)
         }
     }
-}
+}*/

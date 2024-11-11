@@ -5,6 +5,7 @@ import android.os.Handler
 import android.os.Looper
 import com.monetization.core.ad_units.core.AdType
 import com.monetization.core.commons.AdsCommons
+import com.monetization.core.commons.AdsCommons.adEnabledSdkString
 import com.monetization.core.commons.AdsCommons.isFullScreenAdShowing
 import com.monetization.core.commons.AdsCommons.logAds
 import com.monetization.core.commons.SdkConfigs
@@ -36,6 +37,7 @@ abstract class AdmobBaseInstantAdsManager(private val adType: AdType) {
 
     fun onFreeAd(messagesType: MessagesType?, check: Boolean = false) {
         onDismissListener?.invoke(check, messagesType)
+        uiAdsListener = null
         onDismissListener = null
         isFullScreenAdShowing = false
         stopHandler()
@@ -93,28 +95,28 @@ abstract class AdmobBaseInstantAdsManager(private val adType: AdType) {
         normalLoadingTime: Long = 1_000,
         instantLoadingTime: Long = 8_000,
         controller: AdsController?,
+        uiAdsListener: UiAdsListener?,
         onLoadingDialogStatusChange: (Boolean) -> Unit,
         onAdDismiss: ((Boolean, MessagesType?) -> Unit)? = null,
         showAd: () -> Unit,
     ) {
         val key = controller?.getAdKey() ?: ""
-        val enable = placementKey.isRemoteAdEnabled(key)
         if (AdsCommons.isFullScreenAdShowing) {
             logAds("Full Screen Ad is already showing")
             return
         }
         loadingDialogListener = onLoadingDialogStatusChange
         onDismissListener = onAdDismiss
-
-
-        if (enable.not()) {
-            logAds("Ad is not enabled Key=$key,placement=$placementKey,type=$adType", true)
-            onFreeAd(MessagesType.AdNotEnabled)
-            return
-        }
+        this.uiAdsListener = uiAdsListener
         if (controller == null) {
             logAds("No Controller Available Key=$key,type=$adType", true)
             onFreeAd(MessagesType.NoController)
+            return
+        }
+        val enable = placementKey.isRemoteAdEnabled(key, controller.getAdType())
+        if (enable.not()) {
+            logAds("Ad is not enabled Key=$key,placement=$placementKey,type=$adType", true)
+            onFreeAd(MessagesType.AdNotEnabled)
             return
         }
         if (SdkConfigs.canShowAds(key, adType).not()) {
@@ -150,7 +152,10 @@ abstract class AdmobBaseInstantAdsManager(private val adType: AdType) {
             }, normalLoadingTime)
         } else {
             startHandler(instantLoadingTime)
-            controller.loadAd(activity = activity,
+            uiAdsListener?.onAdRequested(key = controller.getAdKey())
+            controller.loadAd(
+                placementKey = adEnabledSdkString,
+                activity = activity,
                 calledFrom = "showInstantAd ad to show null",
                 callback = object : AdsLoadingStatusListener {
                     override fun onAdLoaded(adKey: String) {

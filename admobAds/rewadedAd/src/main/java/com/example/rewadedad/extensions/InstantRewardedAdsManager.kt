@@ -7,6 +7,7 @@ import com.monetization.core.managers.AdmobBaseInstantAdsManager
 import com.monetization.core.managers.FullScreenAdsShowListener
 import com.monetization.core.ad_units.core.AdType
 import com.monetization.core.commons.AdsCommons
+import com.monetization.core.listeners.UiAdsListener
 import com.monetization.core.msgs.MessagesType
 
 object InstantRewardedAdsManager : AdmobBaseInstantAdsManager(AdType.REWARDED) {
@@ -19,6 +20,7 @@ object InstantRewardedAdsManager : AdmobBaseInstantAdsManager(AdType.REWARDED) {
         normalLoadingTime: Long = 1_000,
         instantLoadingTime: Long = 8_000,
         requestNewIfAdShown: Boolean = false,
+        uiAdsListener: UiAdsListener? = null,
         onLoadingDialogStatusChange: (Boolean) -> Unit,
         onRewarded: (Boolean) -> Unit,
         onAdDismiss: (Boolean, MessagesType?) -> Unit,
@@ -31,6 +33,7 @@ object InstantRewardedAdsManager : AdmobBaseInstantAdsManager(AdType.REWARDED) {
             instantLoadingTime = instantLoadingTime,
             controller = controller,
             onLoadingDialogStatusChange = onLoadingDialogStatusChange,
+            uiAdsListener = uiAdsListener,
             onAdDismiss = onAdDismiss,
             showAd = {
                 (controller?.getAvailableAd() as? AdmobRewardedAd)?.showAd(

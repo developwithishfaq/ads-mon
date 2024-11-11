@@ -40,7 +40,8 @@ fun AdsUiWidget.sdkNativeAdSR(
             placementKey = placementKey,
             adKey = adKey,
             model = adsWidgetData,
-            defEnabled = defaultEnable
+            defEnabled = defaultEnable,
+            isNativeAd = true
         )
 
         val adsWithHistory = showRatesHelper.getNativeControllersWithHistory()

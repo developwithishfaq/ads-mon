@@ -25,6 +25,7 @@ abstract class AdmobBasePreloadAdsManager(
     private fun onFreeAd(msgType: MessagesType?, check: Boolean = false) {
         onDismissListener?.invoke(check, msgType)
         onDismissListener = null
+        uiAdsListener = null
         isFullScreenAdShowing = false
     }
 
@@ -47,23 +48,27 @@ abstract class AdmobBasePreloadAdsManager(
         controller: AdsController?,
         requestNewIfNotAvailable: Boolean,
         onLoadingDialogStatusChange: (Boolean) -> Unit,
+        uiAdsListener: UiAdsListener?,
         onAdDismiss: ((Boolean, MessagesType?) -> Unit)? = null,
         showAd: () -> Unit,
     ) {
         val key = controller?.getAdKey() ?: ""
-        val enabled = placementKey.isRemoteAdEnabled(key)
+
         if (isFullScreenAdShowing) {
             logAds("Full Screen Ad is already showing", true)
             return
         }
         loadingDialogListener = onLoadingDialogStatusChange
         onDismissListener = onAdDismiss
+        this.uiAdsListener = uiAdsListener
         val availableAd = controller?.getAvailableAd()
         if (controller == null) {
             logAds("No Controller Found Against $key,$adType", true)
             onFreeAd(MessagesType.NoController)
             return
         }
+        val enabled =
+            placementKey.isRemoteAdEnabled(key, controller.getAdType() ?: AdType.INTERSTITIAL)
         if (enabled.not()) {
             logAds("$adType:$key,is not enabled", true)
             onFreeAd(MessagesType.AdNotEnabled)
@@ -71,7 +76,12 @@ abstract class AdmobBasePreloadAdsManager(
         }
         if (requestNewIfNotAvailable && availableAd == null) {
             logAds("$adType:$key,New Ad Request as no ad is available to show", true)
-            controller.loadAd(activity, "", null)
+            controller.loadAd(
+                placementKey = placementKey,
+                activity = activity,
+                calledFrom = "",
+                callback = null
+            )
             onFreeAd(MessagesType.AdNotAvailable)
             return
         }

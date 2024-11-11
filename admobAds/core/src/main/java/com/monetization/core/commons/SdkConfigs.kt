@@ -1,5 +1,7 @@
 package com.monetization.core.commons
 
+import android.annotation.SuppressLint
+import android.app.Activity
 import com.facebook.shimmer.BuildConfig
 import com.monetization.core.ad_units.core.AdType
 import com.monetization.core.commons.AdsCommons.logAds
@@ -8,6 +10,7 @@ import com.monetization.core.listeners.SdkListener
 import com.monetization.core.models.ManualBlockModel
 import com.monetization.core.ui.AdsWidgetData
 
+@SuppressLint("StaticFieldLeak")
 object SdkConfigs {
 
     private var isTestModeEnabled = BuildConfig.DEBUG
@@ -98,11 +101,11 @@ object SdkConfigs {
         configListener = listener
     }
 
-    fun String.isRemoteAdEnabled(key: String, def: Boolean = true): Boolean {
+    fun String.isRemoteAdEnabled(key: String, adType: AdType, def: Boolean = true): Boolean {
         if (configListener == null) {
             throw IllegalArgumentException("Please set Remote Config Listener by call setRemoteConfigsListener(this)")
         }
-        return configListener?.isAdEnabled(this, key) ?: def
+        return configListener?.isAdEnabled(this, key, adType) ?: def
     }
 
     fun String.getRemoteAdWidgetModel(
@@ -155,6 +158,13 @@ object SdkConfigs {
         } else {
             return sdkListener?.canLoadAd(adType, adKey) ?: false
         }
+    }
+
+    private var adsActivityRef: Activity? = null
+    fun getCurrentActivityRef() = adsActivityRef
+
+    fun setActivity(p0: Activity?) {
+        adsActivityRef = p0
     }
 
 }

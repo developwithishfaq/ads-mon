@@ -18,11 +18,12 @@ class AdmobAppOpenAdsController(
     private var currentAppOpenAd: AdmobAppOpenAd? = null
 
     override fun loadAd(
+        placementKey: String,
         activity: Activity,
         calledFrom: String,
-        callback: AdsLoadingStatusListener?,
+        callback: AdsLoadingStatusListener?
     ) {
-        val commonLoadChecks = commonLoadAdChecks(callback)
+        val commonLoadChecks = commonLoadAdChecks(placementKey = placementKey,callback)
         if (commonLoadChecks.not()) {
             return
         }

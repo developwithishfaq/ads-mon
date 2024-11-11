@@ -3,6 +3,7 @@ package com.monetization.interstitials.extensions
 import android.app.Activity
 import com.monetization.core.ad_units.core.AdType
 import com.monetization.core.commons.AdsCommons
+import com.monetization.core.listeners.UiAdsListener
 import com.monetization.core.managers.AdmobBaseInstantAdsManager
 import com.monetization.core.managers.FullScreenAdsShowListener
 import com.monetization.core.msgs.MessagesType
@@ -18,6 +19,7 @@ object InstantInterstitialAdsManager : AdmobBaseInstantAdsManager(AdType.INTERST
         normalLoadingTime: Long = 1_000,
         instantLoadingTime: Long = 8_000,
         requestNewIfAdShown: Boolean = false,
+        uiAdsListener: UiAdsListener? = null,
         onLoadingDialogStatusChange: (Boolean) -> Unit,
         onAdDismiss: (Boolean, MessagesType?) -> Unit,
     ) {
@@ -30,6 +32,7 @@ object InstantInterstitialAdsManager : AdmobBaseInstantAdsManager(AdType.INTERST
             controller = controller,
             onLoadingDialogStatusChange = onLoadingDialogStatusChange,
             onAdDismiss = onAdDismiss,
+            uiAdsListener = uiAdsListener,
             showAd = {
                 (controller?.getAvailableAd() as? AdmobInterstitialAd)?.showAd(
                     activity = activity,

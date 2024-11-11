@@ -3,8 +3,10 @@ package com.example.adsxml
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import com.example.adsxml.databinding.ActivityMainBinding
+import com.monetization.adsmain.commons.loadAd
 import com.monetization.adsmain.commons.sdkBannerAd
 import com.monetization.adsmain.commons.sdkNativeAd
+import com.monetization.adsmain.commons.showFullScreenAd
 import com.monetization.bannerads.BannerAdSize
 import com.monetization.bannerads.BannerAdType
 import com.monetization.core.commons.NativeTemplates
@@ -33,7 +35,6 @@ class ComposeActivity : ComponentActivity() {
     }
 
     private fun showNativeAd() {
-//        Handler(Looper.getMainLooper()).postDelayed({
         binding.adFrameTwo.sdkNativeAd(
             activity = this,
             adLayout = NativeTemplates.LargeNative,
@@ -48,7 +49,6 @@ class ComposeActivity : ComponentActivity() {
                 }
             }
         )
-//        }, 10)
     }
 
     private fun showBannerAd() {

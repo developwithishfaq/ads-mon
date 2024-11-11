@@ -7,6 +7,7 @@ import com.monetization.core.managers.AdmobBasePreloadAdsManager
 import com.monetization.core.managers.FullScreenAdsShowListener
 import com.monetization.core.ad_units.core.AdType
 import com.monetization.core.commons.AdsCommons
+import com.monetization.core.listeners.UiAdsListener
 import com.monetization.core.msgs.MessagesType
 
 object PreloadRewardedAdsManager : AdmobBasePreloadAdsManager(AdType.REWARDED) {
@@ -18,6 +19,7 @@ object PreloadRewardedAdsManager : AdmobBasePreloadAdsManager(AdType.REWARDED) {
         requestNewIfNotAvailable: Boolean = true,
         requestNewIfAdShown: Boolean = true,
         normalLoadingTime: Long = 1000,
+        uiAdsListener: UiAdsListener? = null,
         onLoadingDialogStatusChange: (Boolean) -> Unit,
         onRewarded: (Boolean) -> Unit,
         onAdDismiss: (Boolean,MessagesType?) -> Unit,
@@ -29,6 +31,7 @@ object PreloadRewardedAdsManager : AdmobBasePreloadAdsManager(AdType.REWARDED) {
             placementKey = placementKey,
             normalLoadingTime = normalLoadingTime,
             controller = controller,
+            uiAdsListener = uiAdsListener,
             onLoadingDialogStatusChange = onLoadingDialogStatusChange,
             onAdDismiss = onAdDismiss,
             showAd = {

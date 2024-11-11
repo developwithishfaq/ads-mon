@@ -6,6 +6,7 @@ import com.monetization.core.ad_units.core.AdUnit
 import com.monetization.core.commons.AdsCommons
 import com.monetization.core.commons.AdsCommons.logAds
 import com.monetization.core.commons.SdkConfigs
+import com.monetization.core.commons.SdkConfigs.isRemoteAdEnabled
 import com.monetization.core.history.AdsManagerHistoryHelper
 import com.monetization.core.listeners.ControllersListener
 import com.monetization.core.managers.AdsLoadingStatusListener
@@ -183,11 +184,13 @@ abstract class AdsControllerBaseHelper(
     }
 
     fun commonLoadAdChecks(
+        placementKey: String,
         callback: AdsLoadingStatusListener?,
     ): Boolean {
+
         logAds("$adType loadAd function called,enabled=$isAdEnabled,requesting=${isAdRequesting()},isAdAvailable=${isAdAvailable()}")
         this.loadingStateListener = callback
-        if (isAdEnabled.not()) {
+        if (isAdEnabled.not() || placementKey.isRemoteAdEnabled(adKey, adType).not()) {
             loadingStateListener?.onAdFailedToLoad(adKey, "${adType} Ad is not enabled", -1)
             return false
         }

@@ -5,17 +5,13 @@ import android.widget.Toast
 import androidx.activity.ComponentActivity
 import com.example.adsxml.databinding.ActivityMainBinding
 import com.monetization.adsmain.commons.addNewController
+import com.monetization.adsmain.commons.loadAd
+import com.monetization.adsmain.commons.loadAdDirectly
 import com.monetization.adsmain.commons.sdkBannerAd
 import com.monetization.adsmain.commons.sdkNativeAd
-import com.monetization.adsmain.showRates.inter.ShowRateFullScreenAds
-import com.monetization.adsmain.showRates.inter.showRatesHelper
-import com.monetization.adsmain.showRates.loadings.ShowRateAdsLoadings.loadAdWithSR
-import com.monetization.adsmain.showRates.models.IgnoreNewRequest
-import com.monetization.adsmain.showRates.models.ignoreIfAnyOtherRequestingOrLoadedAd
 import com.monetization.adsmain.splash.AdmobSplashAdController
 import com.monetization.bannerads.BannerAdSize
 import com.monetization.bannerads.BannerAdType
-import com.monetization.core.ad_units.core.AdType
 import com.monetization.core.commons.NativeTemplates
 import com.monetization.core.listeners.UiAdsListener
 import com.monetization.core.msgs.MessagesType
@@ -43,55 +39,25 @@ class MainActivity : ComponentActivity() {
         setContentView(binding.root)
 
         AdmobInterstitialAdsManager.addNewController(
-            "Splash", listOf("")
-        )
-        AdmobInterstitialAdsManager.addNewController(
             "Inter", listOf("")
-        )
-
-        AdmobInterstitialAdsManager.addNewController(
-            "NewInter", listOf("", "", "", "")
         )
         AdmobNativeAdsManager.addNewController(
             "Native", listOf("", "", "", "")
         )
         binding.preloadAd.setOnClickListener {
-            "Splash".loadAdWithSR(AdType.INTERSTITIAL, this@MainActivity)
+            "Inter".loadAd(true.toConfigString())
         }
         binding.fetchConfig.setOnClickListener {
-            fetchRemoteConfigController{
+            fetchRemoteConfigController {
                 showNativeAd()
             }
         }
         binding.reloadAd.setOnClickListener {
-            "NewInter".loadAdWithSR(
-                AdType.INTERSTITIAL,
-                this@MainActivity,
-                ignoreFromLimit = listOf("Splash")
-            )
+            "Native".loadAdDirectly()
         }
         val sdkDialogs = SdkDialogs(this@MainActivity)
         binding.showAd.setOnClickListener {
             showNativeAd()
-            /*
-            ShowRateFullScreenAds.showFullScreenAdsWithSR(
-                placementKey = true.toConfigString(),
-                activity = this@MainActivity,
-                normalLoadingTime = 1_000,
-                isInstantAd = false,
-                onLoadingDialogStatusChange = {
-                    if (it) {
-                        sdkDialogs.showNormalLoadingDialog()
-                    } else {
-                        sdkDialogs.hideLoadingDialog()
-                    }
-                },
-                key = "Inter",
-                adType = AdType.INTERSTITIAL,
-                onAdDismiss = {
-                    Toast.makeText(this, "Ad shown=$it", Toast.LENGTH_SHORT).show()
-                }
-            )*/
         }
 
     }
@@ -120,7 +86,7 @@ class MainActivity : ComponentActivity() {
     }
 
     private fun showNativeAd() {
-        binding.adFrame.sdkNativeAd(activity = this,
+        binding.adFrame.sdkNativeAd(
             adLayout = NativeTemplates.LargeNative,
             adKey = "Native",
             placementKey = "Native",
