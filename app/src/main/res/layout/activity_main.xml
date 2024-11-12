@@ -35,6 +35,12 @@
         android:text="Show" />
 
     <Button
+        android:id="@+id/refreshAd"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Refresh Ad" />
+
+    <Button
         android:id="@+id/reloadAd"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

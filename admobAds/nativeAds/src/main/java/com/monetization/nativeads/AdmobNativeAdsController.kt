@@ -22,6 +22,13 @@ class AdmobNativeAdsController(
 
     private var currentNativeAd: AdmobNativeAd? = null
 
+    private var shownNativeAds = mutableListOf<AdmobNativeAd>()
+
+    fun adShown(admobNativeAd: AdmobNativeAd) {
+        shownNativeAds.add(admobNativeAd)
+    }
+
+
     override fun loadAd(
         placementKey: String,
         activity: Activity,
@@ -69,6 +76,9 @@ class AdmobNativeAdsController(
 
     override fun destroyAd(activity: Activity?) {
         logAds("Native Ad(${getAdKey()}) Destroyed,Id=${getAdId()}", true)
+        currentNativeAd?.let {
+            adShown(it)
+        }
         currentNativeAd = null
     }
 

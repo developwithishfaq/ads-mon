@@ -22,6 +22,7 @@ fun AdsUiWidget.sdkNativeAd(
     requestNewOnShow: Boolean = false,
     showNewAdEveryTime: Boolean = true,
     showOnlyIfAdAvailable: Boolean = false,
+    showFromHistory: Boolean = false,
     defaultEnable: Boolean = true,
     adsWidgetData: AdsWidgetData? = null,
     listener: UiAdsListener? = null
@@ -46,7 +47,8 @@ fun AdsUiWidget.sdkNativeAd(
                 oneTimeUse = showNewAdEveryTime,
                 requestNewOnShow = requestNewOnShow,
                 listener = listener,
-                showOnlyIfAdAvailable = showOnlyIfAdAvailable
+                showOnlyIfAdAvailable = showOnlyIfAdAvailable,
+                showFromHistory = showFromHistory
             )
         }
     }

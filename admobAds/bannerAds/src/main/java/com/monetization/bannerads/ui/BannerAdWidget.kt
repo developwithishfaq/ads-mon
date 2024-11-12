@@ -97,6 +97,7 @@ class BannerAdWidget @JvmOverloads constructor(
         )
     }
 
+
     override fun populateAd() {
         adUnit?.let {
             (it as? AdmobBannerAd)?.populateAd(activity!!, this, onPopulated = {

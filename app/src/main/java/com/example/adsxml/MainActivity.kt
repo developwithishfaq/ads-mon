@@ -15,6 +15,7 @@ import com.monetization.bannerads.BannerAdType
 import com.monetization.core.commons.NativeTemplates
 import com.monetization.core.listeners.UiAdsListener
 import com.monetization.core.msgs.MessagesType
+import com.monetization.core.ui.LayoutInfo
 import com.monetization.core.utils.dialog.SdkDialogs
 import com.monetization.core.utils.dialog.showNormalLoadingDialog
 import com.monetization.interstitials.AdmobInterstitialAdsManager
@@ -56,6 +57,15 @@ class MainActivity : ComponentActivity() {
             "Native".loadAdDirectly()
         }
         val sdkDialogs = SdkDialogs(this@MainActivity)
+
+        binding.refreshAd.setOnClickListener {
+            binding.adFrame.getNativeWidget().showNativeAd(
+                view = LayoutInfo.LayoutByName(NativeTemplates.SmallNative),
+                onShown = {
+
+                }
+            )
+        }
         binding.showAd.setOnClickListener {
             showNativeAd()
         }
@@ -89,7 +99,7 @@ class MainActivity : ComponentActivity() {
         binding.adFrame.sdkNativeAd(
             adLayout = NativeTemplates.LargeNative,
             adKey = "Native",
-            placementKey = "Native",
+            placementKey = true.toConfigString(),
             showNewAdEveryTime = true,
             lifecycle = lifecycle,
             listener = object : UiAdsListener {

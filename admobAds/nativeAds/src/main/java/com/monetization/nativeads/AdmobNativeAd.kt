@@ -43,7 +43,6 @@ class AdmobNativeAd(
     }
 
     override fun destroyAd(activity: Activity) {
-
         AdmobNativeAdsManager.getAdController(adKey)?.destroyAd(activity)
     }
     override fun populateAd(

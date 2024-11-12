@@ -91,33 +91,46 @@ class NativeAdWidget @JvmOverloads constructor(
         }
     }
 
-    override fun populateAd() {
-        val layout = layoutView?.inflateLayoutByLayoutInfo(activity!!)
-        val admobNativeView = layout?.findViewById<AdmobNativeView>(R.id.adView)
-        logAds(
-            "populateNativeAd(${activity?.localClassName?.substringAfterLast(".")}) " +
-                    ",Ad Ok=${adUnit != null}," +
-                    "Layout Ok=${layout != null},Native View Ok=${admobNativeView != null}"
-        )
+
+    fun showNativeAd(view: LayoutInfo, onShown: () -> Unit) {
         adUnit?.let {
+            val layout = view.inflateLayoutByLayoutInfo(activity!!)
+            val admobNativeView = layout.findViewById<AdmobNativeView>(R.id.adView)
+            logAds(
+                "populateNativeAd(${activity?.localClassName?.substringAfterLast(".")}) " +
+                        ",Ad Ok=${adUnit != null}," +
+                        "Layout Ok=${layout != null},Native View Ok=${admobNativeView != null}"
+            )
+            removeAllViews()
+            layout.parent?.let { parent ->
+                (parent as ViewGroup).removeView(layout)
+            }
+
             addView(layout)
             admobNativeView?.let { view ->
-
                 (it as AdmobNativeAd).populateAd(activity!!, view, adsWidgetData) {
-                    if (oneTimeUse) {
-                        adsController?.destroyAd(activity!!)
-                        if (requestNewOnShow) {
-                            adsController?.loadAd(
-                                placementKey = adEnabledSdkString,
-                                activity = activity!!,
-                                calledFrom = "requestNewOnShow",
-                                callback = null
-                            )
-                        }
-                    }
                     refreshLayout()
+                    onShown.invoke()
                 }
             }
+        }
+    }
+
+    override fun populateAd() {
+        layoutView?.let {
+            showNativeAd(view = it, onShown = {
+                if (oneTimeUse) {
+                    adsController?.destroyAd(activity!!)
+                    if (requestNewOnShow) {
+                        adsController?.loadAd(
+                            placementKey = adEnabledSdkString,
+                            activity = activity!!,
+                            calledFrom = "requestNewOnShow",
+                            callback = null
+                        )
+                    }
+                }
+            })
         }
     }
 
