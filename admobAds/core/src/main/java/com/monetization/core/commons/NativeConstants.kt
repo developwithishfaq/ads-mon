@@ -62,6 +62,8 @@ object NativeConstants {
             is LayoutInfo.LayoutByXmlView -> {
                 this.layoutRes.inflateLayoutById(context)
             }
+
+            is LayoutInfo.LayoutByView -> this.view
         }
     }
 

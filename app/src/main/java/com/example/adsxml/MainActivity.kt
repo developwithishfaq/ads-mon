@@ -1,6 +1,7 @@
 package com.example.adsxml
 
 import android.os.Bundle
+import android.view.LayoutInflater
 import android.widget.Toast
 import androidx.activity.ComponentActivity
 import com.example.adsxml.databinding.ActivityMainBinding
@@ -13,6 +14,7 @@ import com.monetization.adsmain.splash.AdmobSplashAdController
 import com.monetization.bannerads.BannerAdSize
 import com.monetization.bannerads.BannerAdType
 import com.monetization.core.commons.NativeTemplates
+import com.monetization.core.commons.Utils.resToView
 import com.monetization.core.listeners.UiAdsListener
 import com.monetization.core.msgs.MessagesType
 import com.monetization.core.ui.LayoutInfo
@@ -59,8 +61,13 @@ class MainActivity : ComponentActivity() {
         val sdkDialogs = SdkDialogs(this@MainActivity)
 
         binding.refreshAd.setOnClickListener {
+            val view = LayoutInflater.from(this@MainActivity)
+                .inflate(
+                    com.monetization.nativeads.R.layout.small_native_ad,
+                    null, false
+                )
             binding.adFrame.getNativeWidget().showNativeAd(
-                view = LayoutInfo.LayoutByName(NativeTemplates.SmallNative),
+                view = LayoutInfo.LayoutByView(view),
                 onShown = {
 
                 }
